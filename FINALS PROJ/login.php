@@ -1,9 +1,53 @@
+<?php
+session_start();
+
+$login_error = false;
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbase = "db_accounts_cc";
+$port = 3308;
+
+$conn = new mysqli($servername, $username, $password, $dbase, $port);
+
+if(isset($_POST['sub'])){
+  $username = $_POST['LIusername'];
+  $password = md5($_POST['LIpassword']); 
+
+  $sql = "SELECT * FROM fm_tbl_users WHERE username = '$username' AND password = '$password'";
+  $result = $conn -> query($sql);
+
+  if($result === false){
+    echo "SQL Error: " . mysqli_error($conn);
+  }
+
+  if ($result && $result->num_rows == 1) {
+    $row = $result->fetch_assoc();
+
+    $_SESSION['user_id'] = $row['id'];
+    $_SESSION['username'] = $row['username'];
+    $_SESSION['role'] = $row['role'];
+    $_SESSION['full_name'] = $row['full_name'];
+
+    if ($row['role'] == 'Admin') {
+      header("Location: admin.php");
+    } else {
+      header("Location: homepage.php");
+    }
+    exit();
+  } else {
+    $login_error = true;
+  }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fundify Me</title>
+  <title>Fundify Me Login</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body, html {
@@ -59,7 +103,7 @@
 <div class="container-fluid login-container">
   <div class="row h-100">
     <div class="col-md-6 left-container p-0">
-      <img src="login-image.png" alt="Login Image">
+      <img src="login-photo3.png" alt="Login Image">
     </div>
 
     <div class="col-md-6 right-container">
@@ -94,76 +138,25 @@
 
       <div class="row mt-3">
         <div class="col text-center">
-          <small class="text-muted">New User? <a href="#" class="text-primary">Signup</a></small>
+          <small class="text-muted">New User? <a href="signup.php" class="text-primary">Sign-Up</a></small>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+<?php if (!empty($login_error)): ?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+Swal.fire({
+  icon: 'error',
+  title: 'Login Failed',
+  text: 'Invalid username or password.'
+});
+</script>
+<?php endif; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 
-<?php
-session_start();
-
-// database connection
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbase = "db_accounts_cc";
-$port = 3308;
-
-
-$conn = new mysqli($servername, $username, $password, $dbase, $port);
-
-// checking the connection
-
-if($conn -> connect_error){
-  die("Connection Unsuccessful");
-  }else{
-  echo "Connection Successful";
-  }
-
-// user input
-
-  if(isset($_POST['sub'])){
-    $username = $_POST['LIusername'];
-    $password = md5($_POST['LIpassword']); 
-  }
-
-  $sql = "SELECT * FROM fm_tbl_users WHERE username = '$username' AND password = '$password'";
-  $result = $conn -> query($sql);
-
-  if ($result -> num_rows == 1) {
-    $row = $result->fetch_assoc();
-
-
-    $_SESSION['user_id'] = $row['id'];
-    $_SESSION['username'] = $row['username'];
-    $_SESSION['role'] = $row['role'];
-    $_SESSION['full_name'] = $row['full_name'];
-
-
-    if ($row['role'] == 'Admin') {
-        header("Location: admin.php");
-    } else {
-        header("Location: homepage.php");
-    }
-    exit();
-
-  } else {
-    echo "<script>
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: 'Something went wrong!',
-    });
-    </script>";
-  }
-
-
-?>

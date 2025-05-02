@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 $login_error = false;
 
@@ -24,11 +23,6 @@ if(isset($_POST['sub'])){
 
   if ($result && $result->num_rows == 1) {
     $row = $result->fetch_assoc();
-
-    $_SESSION['user_id'] = $row['id'];
-    $_SESSION['username'] = $row['username'];
-    $_SESSION['role'] = $row['role'];
-    $_SESSION['full_name'] = $row['full_name'];
 
     if ($row['role'] == 'Admin') {
       header("Location: admin.php");
@@ -145,16 +139,19 @@ if(isset($_POST['sub'])){
   </div>
 </div>
 
-<?php if (!empty($login_error)): ?>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-Swal.fire({
-  icon: 'error',
-  title: 'Login Failed',
-  text: 'Invalid username or password.'
-});
-</script>
-<?php endif; ?>
+<?php
+if ($login_error == true) {
+  echo '
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    Swal.fire({
+      icon: "error",
+      title: "Login Failed",
+      text: "Invalid username or password."
+    });
+  </script>';
+}
+?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 </body>

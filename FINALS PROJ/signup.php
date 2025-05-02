@@ -189,28 +189,32 @@ $signup_error = false;
   </div>
 </div>
 
-<?php if ($signup_success): ?>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-Swal.fire({
-  icon: 'success',
-  title: 'Account Created!',
-  text: 'You can now login.',
-  confirmButtonText: 'OK'
-});
-</script>
-<?php endif; ?>
+<?php
+if ($signup_success == true) {
+  echo '
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    Swal.fire({
+      icon: "success",
+      title: "Account Created!",
+      text: "You can now login.",
+      confirmButtonText: "OK"
+    });
+  </script>';
+}
 
-<?php if ($signup_error): ?>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-Swal.fire({
-  icon: 'error',
-  title: 'Signup Failed',
-  text: 'Something went wrong. Try again.',
-});
-</script>
-<?php endif; ?>
+if ($signup_error == true) {
+  echo '
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    Swal.fire({
+      icon: "error",
+      title: "Signup Failed",
+      text: "Something went wrong. Try again."
+    });
+  </script>';
+}
+?>
 
 </body>
 </html>

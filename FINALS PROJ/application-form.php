@@ -8,13 +8,60 @@ $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
-$member_id = $_SESSION['member_id'];
-$first_name = $_SESSION['AFfirstname'];
-$middle_name = $_SESSION['AFmiddlename'];
-$surname = $_SESSION['AFsurname'];
-$email = $_SESSION['AFemail'];
-$contact = $_SESSION['AFcontactnum'];
-$address = $_SESSION['AFaddress'];
+if(isset($_POST['apply'])){
+  $first_name = $_POST['AFfirstname'];
+  $middle_name = $_POST['AFmiddlename'];
+  $surname = $_POST['AFsurname'];
+  $email = $_POST['AFemail'];
+  $contact = $_POST['AFcontactnum'];
+  $address = $_POST['AFaddress'];
+  $loan_type = $_POST['AFloantype'];
+  $loan_term = $_POST['AFloanterm'];
+  $payment_terms = $_POST['AFpaymentterms'];
+
+  $full_name = $first_name. " " .$middle_name. " " .$surname;
+
+  $sql_member = "INSERT INTO fm_tbl_member (member_name, contact_information, address) VALUES ('$fullname', '$contact', '$address')";
+  $conn->query($sql_member);
+
+  $member_id = $conn->insert_id;
+
+  $sql_loan_type = "SELECT loan_type_id FROM fm_tbl_loantype WHERE loan_type_name = '$loan_type_name'";
+  $result_loan_type = $conn->query($sql_loan_type);
+  $row_loan_type = $result_loan_type->fetch_assoc();
+  $loan_type_id = $row_loan_type['loan_type_id'];
+
+  $loan_amount = 0;
+  $interest_rate = 0;
+
+  if ($loan_type == "1") {
+      $loan_amount = 20000;
+      $interest_rate = 0.05; // 5%
+  } else if ($loan_type == "2") {
+      $loan_amount = 50000;
+      $interest_rate = 0.06; // 6%
+  } else if ($loan_type == "3") {
+      $loan_amount = 100000;
+      $interest_rate = 0.04; // 4%
+  } else if ($loan_type == "4") {
+      $loan_amount = 15000;
+      $interest_rate = 0.03; // 3%
+  }
+
+  $total_amount_due = $loan_amount + ($loan_amount * $interest_rate);
+
+  $date_applied = date("Y-m-d");  // current date 
+  $date_approved = date("Y-m-d", strtotime("+3 days"));  // approved after 3 days 
+  $date_imbursed = date("Y-m-d", strtotime("+5 days")); // imbursed 5 days later 
+
+  $sql = "INSERT INTO fm_tbl_loan (borrower_id, loan_type, loan_amount, interest_rate, total_amount_due, date_applied, date_approved, date_imbursed) VALUES ('$borrower_id', '$loan_type', '$loan_amount', '$interest_rate', '$total_amount_due', '$date_applied', '$date_approved', '$date_imbursed')";
+
+  if ($conn->query($sql) === TRUE) {
+      echo "Loan application submitted successfully!";
+  } else {
+      echo "Error: " . $conn->error;
+  }
+}
 
 ?>
 
@@ -391,10 +438,10 @@ $address = $_SESSION['AFaddress'];
         <label>Loan Type</label>
         <select name="AFloantype required">
           <option selected disabled>Select Loan Type</option>
-          <option>Personal Loan</option>
-          <option>Auto Loan</option>
-          <option>Housing Loan</option>
-          <option>Student Loan</option>
+          <option value="1">Personal Loan</option>
+          <option value="2">Auto Loan</option>
+          <option value="3">Housing Loan</option>
+          <option value="4">Student Loan</option>
         </select>
       </div>
 
@@ -407,9 +454,8 @@ $address = $_SESSION['AFaddress'];
           <option value="24">24 months</option>
         </select>
       </div>
-    </div>
 
-    <!--payment terms -->
+      <!--payment terms -->
       <h3><b>Payment Details</b></h3>
       <p>Fill out the form to submit your loan request. Do not leave blank fields.</p>
 
@@ -422,17 +468,12 @@ $address = $_SESSION['AFaddress'];
         </select>
       </div>
 
-      <div class="form-group">
-        <label>Outstanding Balance</label>
-        <input type="text" name="AFoutstandingbalance" step="0.01" id="" value="" required>
-      </div>
-
       <div class="row">
-        <div class="col mt-3">  
+        <div class="col mt-2 mb-2">  
             <input type="submit"  name="apply" class="btn btn-dark btn-block w-100" value="Apply Now" id=sub>
         </div>
     </div>
-
+    </div>
 </form>
 </div>
 

@@ -18,7 +18,10 @@ $signup_error = false;
     $SUpassword = md5($_POST['password']);
     $role = "User";
 
+    // newly added
+
     $insertsql = "INSERT INTO fm_tbl_users (full_name, username, email, password, role) VALUES ('$SUfullname', '$SUusername', '$SUemail', '$SUpassword', '$role')";
+
 
     if ($conn->query($insertsql) === TRUE) {
         $signup_success = true;

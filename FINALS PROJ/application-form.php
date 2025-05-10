@@ -1,3 +1,23 @@
+<?php
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbase = "db_accounts_cc";
+$port = 3308;
+
+$conn = new mysqli($servername, $username, $password, $dbase, $port);
+
+$member_id = $_SESSION['member_id'];
+$first_name = $_SESSION['AFfirstname'];
+$middle_name = $_SESSION['AFmiddlename'];
+$surname = $_SESSION['AFsurname'];
+$email = $_SESSION['AFemail'];
+$contact = $_SESSION['AFcontactnum'];
+$address = $_SESSION['AFaddress'];
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -327,6 +347,7 @@
       <h3><b>Personal Details</b></h3>
       <p>Fill out the form to submit your loan request. Do not leave blank fields.</p>
 
+      <form action="submit-loan.php" method="POST">
       <div class="row">
         <div class="col form-group">
           <label>First Name</label>
@@ -368,7 +389,7 @@
 
       <div class="form-group">
         <label>Loan Type</label>
-        <select>
+        <select name="AFloantype required">
           <option selected disabled>Select Loan Type</option>
           <option>Personal Loan</option>
           <option>Auto Loan</option>
@@ -377,52 +398,24 @@
         </select>
       </div>
 
-      <div class="row">
-        <div class="col form-group">
-          <label>Loan Amount</label>
-          <input type="text" name="AFloanamount" id="" value="">
-        </div>
-        <div class="col form-group">
-          <label>Interest Rate</label>
-          <input type="text" name="AFinterestrate" id="" value="">
-        </div>
-      </div>
-
       <div class="form-group">
         <label>Loan Term</label>
-        <select>
+        <select name="AFloanterm" required>
           <option selected disabled>Select Term</option>
-          <option>6 months</option>
-          <option>12 months</option>
-          <option>24 months</option>
+          <option value="6">6 months</option>
+          <option value="12">12 months</option>
+          <option value="24">24 months</option>
         </select>
       </div>
     </div>
 
-    <!--application dates and payment -->
-    <div class="form-card">
-      <h3><b>Application Dates</b></h3>
-      <p>Fill out the form to submit your loan request. Do not leave blank fields.</p>
-
-      <div class="form-group">
-        <label>Date Applied</label>
-        <input type="date" name="AFdateapplied" id="" value="">
-      </div>
-      <div class="form-group">
-        <label>Date Approved <span class="required">*</span></label>
-        <input type="date" name="AFdateapproved" id="" value="">
-      </div>
-      <div class="form-group">
-        <label>Date Disbursed <span class="required">*</span></label>
-        <input type="date" name="AFdatedisbursed" id="" value="">
-      </div>
-
+    <!--payment terms -->
       <h3><b>Payment Details</b></h3>
       <p>Fill out the form to submit your loan request. Do not leave blank fields.</p>
 
       <div class="form-group">
         <label>Payment Terms</label>
-        <select>
+        <select name="AFpaymentterms" required>
           <option selected disabled>Select Terms</option>
           <option>Monthly</option>
           <option>Quarterly</option>
@@ -431,7 +424,7 @@
 
       <div class="form-group">
         <label>Outstanding Balance</label>
-        <input type="text" name="AFoutstandingbalance" id="" value="">
+        <input type="text" name="AFoutstandingbalance" step="0.01" id="" value="" required>
       </div>
 
       <div class="row">
@@ -511,5 +504,4 @@
 </body>
 </html>
 
-<?php
-?>
+

@@ -301,7 +301,7 @@
         <div class="banner-text text-white">
           <h1 class="mb-3">Need Financial Assistance? <br> Apply for a Loan Today.</h1>
           <h6 class="mb-3 fw-light">Take control of your finances with a quick and hassle-free loan application. <br> Whether it's for education, personal needs, or emergencies, we've got you <br> covered!</h6>
-          <a class="btn-custom-blue btn btn-lg fw-light" href="#!" role="button">Apply Now!</a>
+          <a class="btn-custom-blue btn btn-lg fw-light" href="application-form.php" role="button">Apply Now!</a>
         </div>
       </div>
     </div>

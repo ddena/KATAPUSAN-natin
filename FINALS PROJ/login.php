@@ -10,8 +10,6 @@ $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
-// new
-
 $login_error = false;
 $login_success = false;
 
@@ -29,20 +27,22 @@ if(isset($_POST['sub'])){
 
     session_start();
 
-    $_SESSION['username'] = $LIusername;
+    // storing session variables -- ewan k kung dapat ba to
+    $_SESSION['username'] = $username; 
     $_SESSION['role'] = $role;
     $_SESSION['member_id'] = $member_id;
 
+    // role
     if ($role == 'Admin') {
       header('Location: admin_dashboard.php'); 
     } elseif ($role == 'Employee') {
       header('Location: employee_dashboard.php'); 
     } else {
       header('Location: homepage.php'); 
-  }
-      exit(); // Make sure to stop further script execution
-  }   else {
-  
+    }
+
+    exit(); 
+  } else {
     $login_error = true;
   }
 }

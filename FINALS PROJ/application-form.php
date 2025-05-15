@@ -1,5 +1,6 @@
-<?php
+<!--TBE TANGINAAAAA-->
 
+<?php
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -8,62 +9,102 @@ $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
-if(isset($_POST['apply'])){
-  $first_name = $_POST['AFfirstname'];
-  $middle_name = $_POST['AFmiddlename'];
-  $surname = $_POST['AFsurname'];
-  $email = $_POST['AFemail'];
-  $contact = $_POST['AFcontactnum'];
-  $address = $_POST['AFaddress'];
-  $loan_type = $_POST['AFloantype'];
-  $loan_term = $_POST['AFloanterm'];
-  $payment_terms = $_POST['AFpaymentterms'];
-
-  $full_name = $first_name. " " .$middle_name. " " .$surname;
-
-  $sql_member = "INSERT INTO fm_tbl_member (member_name, contact_information, address) VALUES ('$fullname', '$contact', '$address')";
-  $conn->query($sql_member);
-
-  $member_id = $conn->insert_id;
-
-  $sql_loan_type = "SELECT loan_type_id FROM fm_tbl_loantype WHERE loan_type_name = '$loan_type_name'";
-  $result_loan_type = $conn->query($sql_loan_type);
-  $row_loan_type = $result_loan_type->fetch_assoc();
-  $loan_type_id = $row_loan_type['loan_type_id'];
-
-  $loan_amount = 0;
-  $interest_rate = 0;
-
-  if ($loan_type == "1") {
-      $loan_amount = 20000;
-      $interest_rate = 0.05; // 5%
-  } else if ($loan_type == "2") {
-      $loan_amount = 50000;
-      $interest_rate = 0.06; // 6%
-  } else if ($loan_type == "3") {
-      $loan_amount = 100000;
-      $interest_rate = 0.04; // 4%
-  } else if ($loan_type == "4") {
-      $loan_amount = 15000;
-      $interest_rate = 0.03; // 3%
-  }
-
-  $total_amount_due = $loan_amount + ($loan_amount * $interest_rate);
-
-  $date_applied = date("Y-m-d");  // current date 
-  $date_approved = date("Y-m-d", strtotime("+3 days"));  // approved after 3 days 
-  $date_imbursed = date("Y-m-d", strtotime("+5 days")); // imbursed 5 days later 
-
-  $sql = "INSERT INTO fm_tbl_loan (borrower_id, loan_type, loan_amount, interest_rate, total_amount_due, date_applied, date_approved, date_imbursed) VALUES ('$borrower_id', '$loan_type', '$loan_amount', '$interest_rate', '$total_amount_due', '$date_applied', '$date_approved', '$date_imbursed')";
-
-  if ($conn->query($sql) === TRUE) {
-      echo "Loan application submitted successfully!";
-  } else {
-      echo "Error: " . $conn->error;
-  }
+// check the connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
+// Prepare SweetAlert variables
+$alertMessage = '';
+$alertType = '';
+
+if (isset($_POST['apply'])) {
+    // get form inputs
+    $full_name = $_POST['AFfullname'];
+    $email = $_POST['AFemail'];
+    $contact = $_POST['AFcontactnum'];
+    $address = $_POST['AFaddress'];
+    $loan_type_id = $_POST['AFloantype'];
+    $loan_term = $_POST['AFloanterm'];
+    $payment_terms = $_POST['AFpaymentterms'];
+
+    // insert member info into fm_tbl_member
+    $sql_member = "INSERT INTO fm_tbl_member (member_name, contant_information, address)
+                   VALUES ('$full_name', '$contact', '$address')";
+    if ($conn->query($sql_member) === TRUE) {
+        $member_id = $conn->insert_id;
+    } else {
+        $alertType = 'error';
+        $alertMessage = 'Error inserting member: ' . $conn->error;
+    }
+
+    if (!$alertMessage) {
+        // get loan type details
+        $sql_loan_type = "SELECT loan_type_name FROM fm_tbl_loantype WHERE loan_type_id = $loan_type_id";
+        $result = $conn->query($sql_loan_type);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $loan_type_name = $row['loan_type_name'];
+        } else {
+            $alertType = 'error';
+            $alertMessage = 'Invalid loan type selected.';
+        }
+    }
+
+    if (!$alertMessage) {
+        // set amount and interest based on loan_type_id
+        switch ($loan_type_id) {
+            case 1:
+                $loan_amount = 20000;
+                $interest_rate = 0.05;
+                break;
+            case 2:
+                $loan_amount = 50000;
+                $interest_rate = 0.06;
+                break;
+            case 3:
+                $loan_amount = 100000;
+                $interest_rate = 0.04;
+                break;
+            case 4:
+                $loan_amount = 15000;
+                $interest_rate = 0.03;
+                break;
+            default:
+                $loan_amount = 10000;
+                $interest_rate = 0.05;
+                break;
+        }
+
+        $total_amount_due = $loan_amount + ($loan_amount * $interest_rate);
+        $date_applied = date("Y-m-d");
+        $date_approved = date("Y-m-d", strtotime("+3 days"));
+        $date_disbursed = date("Y-m-d", strtotime("+5 days"));
+
+        $sql_loan = "INSERT INTO fm_tbl_loan 
+                    (loan_amount, interest_rate, loan_term, date_applied, date_approved, date_disbursed, outstanding_balance, borrower_id)
+                    VALUES 
+                    ('$loan_amount', '$interest_rate', '$loan_term', '$date_applied', '$date_approved', '$date_disbursed', '$total_amount_due', '$member_id')";
+
+        if ($conn->query($sql_loan) === TRUE) {
+            $loan_id = $conn->insert_id;
+            $payment_amount = $total_amount_due;
+            $payment_date = date("Y-m-d");
+
+            $sql_payment = "INSERT INTO fm_tbl_payment (loan_id, payment_amount, payment_date) 
+                            VALUES ('$loan_id', '$payment_amount', '$payment_date')";
+            $conn->query($sql_payment);
+
+            $alertType = 'success';
+            $alertMessage = 'Loan application and payment record submitted successfully!';
+        } else {
+            $alertType = 'error';
+            $alertMessage = 'There was an issue with your loan submission. Please try again.';
+        }
+    }
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -255,9 +296,8 @@ if(isset($_POST['apply'])){
 
     footer {
       background-color: #f8f8f8;
-      margin-top: 30px;
+      padding: 40px;
       border-top: 1px solid #ccc;
-      
     }
 
     .footer-container {
@@ -329,7 +369,9 @@ if(isset($_POST['apply'])){
 
     .footer-bottom {
       text-align: center;
+      padding-top: 20px;
       border-top: 1px solid #ccc;
+      margin-top: 20px;
       font-size: 14px;
     }
 
@@ -337,8 +379,11 @@ if(isset($_POST['apply'])){
       border: none;
       border-top: 1px solid #ccc;
       margin-top: 40px;
+      margin-bottom: 20px;
     }
+        
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <!--navbar-->
@@ -357,13 +402,13 @@ if(isset($_POST['apply'])){
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mx-auto text-center gap-2">
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#">APPLY</a>
+                    <a class="nav-link fw-bold" href="application-form.php">APPLY</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#">MY LOANS</a>
+                    <a class="nav-link fw-bold" href="my-loans.php">MY LOANS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#">PAYMENT HISTORY</a>
+                    <a class="nav-link fw-bold" href="payment-history.php">PAYMENT HISTORY</a>
                 </li>
             </ul>
         </div> 
@@ -382,9 +427,9 @@ if(isset($_POST['apply'])){
 <div class="header mt-5">
     <h1 class="mt-3"><b>Application Form</b></h1>
     <div class="breadcrumb">
-      <span>Home</span> 
+      <span><a href="homepage.php"> Home </a></span> 
       <span class="mx-2"> / </span> 
-      <a href="#"> Loan Apply Form </a>
+      <span> Loan Apply Form </span>
     </div> 
   </div>
 
@@ -394,25 +439,11 @@ if(isset($_POST['apply'])){
       <h3><b>Personal Details</b></h3>
       <p>Fill out the form to submit your loan request. Do not leave blank fields.</p>
 
-      <form action="submit-loan.php" method="POST">
-      <div class="row">
-        <div class="col form-group">
-          <label>First Name</label>
-          <input type="text" name="AFfirstname" id="" value="">
-        </div>
-        <div class="col form-group">
-          <label>Middle Name</label>
-          <input type="text" name="AFmiddlename" id="" value="">
-        </div>
-        <div class="col form-group">
-          <label>Surname</label>
-          <input type="text" name="AFsurname" id="" value="">
-        </div>
-      </div>
+      <form action="application-form.php" method="POST">
 
       <div class="form-group">
-        <label>Member ID</label>
-        <input type="text" name="AFmemberid" id="" value="">
+        <label>Full Name</label>
+        <input type="text" name="AFfullname" id="" value="" placeholder="First Name, Middle Name, Last Name">
       </div>
 
       <div class="row">
@@ -420,6 +451,7 @@ if(isset($_POST['apply'])){
           <label>Email</label>
           <input type="email" name="AFemail" id="" value="">
         </div>
+
         <div class="col form-group">
           <label>Contact Number</label>
           <input type="text" name="AFcontactnum" id="" value="">
@@ -436,7 +468,7 @@ if(isset($_POST['apply'])){
 
       <div class="form-group">
         <label>Loan Type</label>
-        <select name="AFloantype required">
+        <select name="AFloantype" required>
           <option selected disabled>Select Loan Type</option>
           <option value="1">Personal Loan</option>
           <option value="2">Auto Loan</option>
@@ -474,8 +506,8 @@ if(isset($_POST['apply'])){
         </div>
     </div>
     </div>
-</form>
 </div>
+</form>
 
   <!--footer tbe-->
   <hr class="footer-divider">
@@ -514,7 +546,7 @@ if(isset($_POST['apply'])){
       <div class="footer-column">
         <h5>Our Services</h5>
         <ul>
-          <li><a href="#">Loan Application</a></li>
+          <li><a href="application-form.php">Loan Application</a></li>
           <li><a href="#">Loan Status Tracking</a></li>
           <li><a href="#">Flexible Payment Options</a></li>
           <li><a href="#">Financial Assistance</a></li>
@@ -536,11 +568,30 @@ if(isset($_POST['apply'])){
         </div>
       </div>
     </div>
-
     <div class="footer-bottom"> 
      <p class="mt-3">Copyright @ 2025. All Rights Reserved.</p> 
     </div>
   </footer>
+
+  <?php
+if ($alertMessage) {
+    echo "<script>
+        Swal.fire({
+            icon: '$alertType',
+            title: '" . ucfirst($alertType) . "',
+            text: '$alertMessage',
+            confirmButtonText: 'Okay'
+        }).then(() => {";
+
+    if ($alertType === 'success') {
+        echo "window.location.href = 'application-form.php';";
+    }
+
+    echo "});
+    </script>";
+}
+?>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
 </body>
 </html>

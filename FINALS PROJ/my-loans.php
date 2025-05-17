@@ -1,6 +1,3 @@
-<!--TBE TANGINA-->
-
-
 <?php
 $servername = "localhost";
 $username = "root";
@@ -113,7 +110,7 @@ if ($conn->connect_error) {
         text-decoration: underline;
         text-decoration-color:rgb(227, 234, 255);
     }
-
+    
     /*footer css*/
     * {
       margin: 0;
@@ -213,44 +210,57 @@ if ($conn->connect_error) {
       margin-bottom: 20px;
     }
 
-    /* Loan card styles */
+    /* Loan Cards Styling */
+    .section-header .text-muted {
+        font-size: 0.95rem;
+    }
+    
     .loan-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        height: 100%;
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-radius: 10px;
+        overflow: hidden;
     }
     
     .loan-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
     }
     
-    .loan-status-active {
-        background-color: #4CAF50;
+    .loan-indicator {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 5px;
+        background-color: #1E3A8A;
+        border-top-left-radius: 5px;
     }
     
-    .loan-status-pending {
-        background-color: #FFC107;
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.8em;
     }
     
-    .loan-status-completed {
-        background-color: #2196F3;
-    }
-
-    .loan-type-section {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 30px;
+    .loan-amount-section {
+        border-left: 3px solid #1E3A8A;
     }
     
-    .loan-type-card {
-        transition: all 0.3s ease;
-        cursor: pointer;
+    .section-title {
+        color: #6c757d;
+        letter-spacing: 1px;
     }
     
-    .loan-type-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    .date-item:last-child {
+        border-bottom: none;
+    }
+    
+    .important-dates .fw-bold {
+        font-size: 0.9rem;
+    }
+    
+    /* Empty state styling */
+    .alert-content {
+        padding: 2rem 1rem;
     }
 </style>
 </head>
@@ -302,175 +312,223 @@ if ($conn->connect_error) {
     </div> 
   </div>
 
-<div class="container mt-5">
-    <!-- Loan Types Section -->
-    <div class="loan-type-section mb-5">
-        <h2 class="mb-4">Available Loan Types</h2>
-        <div class="row">
+
+<div class="container my-5">
+    <!-- loan types -->
+    <div class="loan-types-wrapper">
+        <div class="section-header mb-4">
+            <h2 class="fw-bold text-dark">Explore Our Loan Options</h2>
+            <p class="text-muted">Find the perfect financing solution for your needs.</p>
+            <div class="separator"></div>
+        </div>
+        
+        <div class="row g-4">
             <?php
-            // Display all loan types
+            // loan types
             $sql_types = "SELECT loan_type_id, loan_type_name, description FROM fm_tbl_loantype";
             $result_types = $conn->query($sql_types);
 
             if ($result_types->num_rows > 0) {
                 while ($type = $result_types->fetch_assoc()) {
                     $interest_rate = 0;
+                    $icon = '';
+                    $bgClass = '';
+                    
                     switch ($type['loan_type_id']) {
-                        case 1: $interest_rate = 5; break;
-                        case 2: $interest_rate = 6; break;
-                        case 3: $interest_rate = 4; break;
-                        case 4: $interest_rate = 3; break;
-                        default: $interest_rate = 5; break;
+                        case 1: 
+                            $interest_rate = 5; 
+                            $icon = 'fa-solid fa-user-tag';
+                            $bgClass = 'bg-primary bg-opacity-10';
+                            $features = ['Flexible repayment terms', 'No collateral required', 'Quick approval process'];
+                            break;
+                        case 2: 
+                            $interest_rate = 6; 
+                            $icon = 'fa-solid fa-car';
+                            $bgClass = 'bg-success bg-opacity-10';
+                            $features = ['Competitive rates', 'Up to 80% financing', 'Extended payment terms'];
+                            break;
+                        case 3: 
+                            $interest_rate = 4; 
+                            $icon = 'fa-solid fa-home';
+                            $bgClass = 'bg-info bg-opacity-10';
+                            $features = ['Long-term financing', 'Multiple property types', 'Flexible down payment options'];
+                            break;
+                        case 4: 
+                            $interest_rate = 3; 
+                            $icon = 'fa-solid fa-graduation-cap';
+                            $bgClass = 'bg-warning bg-opacity-10';
+                            $features = ['Low interest rates', 'Grace period after graduation', 'No early payment penalties'];
+                            break;
+                        default: 
+                            $interest_rate = 5; 
+                            $icon = 'fa-solid fa-coins';
+                            $bgClass = 'bg-secondary bg-opacity-10';
+                            $features = ['Competitive rates', 'Flexible terms', 'Quick processing'];
+                            break;
                     }
                     
                     echo '
-                    <div class="col-md-6 col-lg-3 mb-4">
-                        <div class="card loan-type-card h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">' . $type['loan_type_name'] . '</h5>
-                                <p class="card-text">' . $type['description'] . '</p>
-                                <p class="card-text"><small class="text-muted">Interest Rate: ' . $interest_rate . '%</small></p>
-                            </div>
-                            <div class="card-footer bg-transparent border-0">
-                                <a href="application-form.php?loan_type=' . $type['loan_type_id'] . '" class="btn btn-outline-primary btn-sm">Apply Now</a>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card loan-card h-100 border-0 shadow-sm">
+                            <div class="card-body p-0">
+                                <div class="loan-card-header ' . $bgClass . ' p-4 text-center">
+                                    <div class="icon-wrapper mb-3">
+                                        <i class="' . $icon . ' fa-2x"></i>
+                                    </div>
+                                    <h5 class="card-title mb-1">' . $type['loan_type_name'] . '</h5>
+                                    <div class="interest-rate mb-0">
+                                        <span class="display-6 fw-bold text-primary">' . $interest_rate . '%</span>
+                                        <span class="text-muted">interest rate</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="loan-card-content p-4">
+                                    <p class="card-text mb-3">' . $type['description'] . '</p>
+                                    
+                                    <div class="features-list">
+                                        <p class="text-muted mb-2 small fw-bold">Key Features:</p>
+                                        <ul class="list-unstyled">';
+                                        
+                                        foreach ($features as $feature) {
+                                            echo '<li class="mb-2"><i class="fas fa-check-circle text-success me-2 small"></i>' . $feature . '</li>';
+                                        }
+                                        
+                                        echo '
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="loan-details mt-3 pt-3 border-top">
+                                        <div class="d-flex justify-content-between small">
+                                            <span class="text-muted">Loan ID:</span>
+                                            <span class="fw-bold">#' . $type['loan_type_id'] . '</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>';
                 }
             } else {
-                echo '<div class="col-12"><div class="alert alert-info">No loan types available at the moment.</div></div>';
+                echo '<div class="col-12"><div class="alert alert-info p-4 shadow-sm border-0">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-info-circle fa-2x text-info me-3"></i>
+                        <div>
+                            <h5 class="mb-1">No Loans Available</h5>
+                            <p class="mb-0">There are currently no loan types available in our system. Please check back later.</p>
+                        </div>
+                    </div>
+                </div></div>';
             }
             ?>
         </div>
     </div>
+</div>
 
-    <!-- My Loans Section -->
-    <h2 class="mb-4">My Active Loans</h2>
-    <div class="row">
-        <?php
-        // Let's first get all loans without trying to join
-        $sql = "SELECT * FROM fm_tbl_loan ORDER BY date_applied DESC";
-        
-        $result = $conn->query($sql);
+<!-- my loans -->
+<div class="container my-5">
+    <div class="loans-section">
+        <div class="section-header d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-primary">My Active Loans</h2>
+                <p class="text-muted">Manage your current loan portfolio.</p>
+            </div>
+        </div>
 
-        if ($result && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                // Manually determine loan type name and description
-                $loan_type_name = "Unknown";
-                $description = "No description available";
-                
-                // Check if the loan has a loan_type_id (if this column exists)
-                if (isset($row['loan_type_id'])) {
-                    // Try to get loan type info
-                    $type_id = $row['loan_type_id'];
-                    $type_query = "SELECT loan_type_name, description FROM fm_tbl_loantype WHERE loan_type_id = $type_id";
-                    $type_result = $conn->query($type_query);
+        <div class="row g-4">
+            <?php
+            $sql = "SELECT * FROM fm_tbl_loan";
+            $result = $conn->query($sql);
+
+            if ($result && $result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $interest_percent = number_format($row['interest_rate'] * 100, 2) . '%';
                     
-                    if ($type_result && $type_result->num_rows > 0) {
-                        $type_data = $type_result->fetch_assoc();
-                        $loan_type_name = $type_data['loan_type_name'];
-                        $description = $type_data['description'];
-                    } else {
-                        // Fallback values based on what should be in the database
-                        switch ($type_id) {
-                            case 1:
-                                $loan_type_name = "Personal Loan";
-                                $description = "Unsecured loan for personal needs";
-                                break;
-                            case 2:
-                                $loan_type_name = "Auto Loan";
-                                $description = "Loan for purchasing a vehicle";
-                                break;
-                            case 3:
-                                $loan_type_name = "Housing Loan";
-                                $description = "Loan for buying or building a house";
-                                break;
-                            case 4:
-                                $loan_type_name = "Student Loan";
-                                $description = "Loan for educational purposes";
-                                break;
-                            default:
-                                $loan_type_name = "Loan Type " . $type_id;
-                                $description = "Description not available";
-                        }
-                    }
-                }
-                // Determine loan status
-                $status = "Completed";
-                $status_class = "bg-primary";
-                
-                if (strtotime($row['date_approved']) > time()) {
-                    $status = "Pending Approval";
-                    $status_class = "bg-warning";
-                } elseif (strtotime($row['date_disbursed']) > time()) {
-                    $status = "Approved, Pending Disbursement";
-                    $status_class = "bg-info";
-                } elseif ($row['outstanding_balance'] > 0) {
-                    $status = "Active";
-                    $status_class = "bg-success";
-                }
-                
-                // Format interest rate as percentage
-                $interest_percent = number_format($row['interest_rate'] * 100, 2) . '%';
-                
-                echo '
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card loan-card shadow-sm">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Loan #' . $row['loan_id'] . '</h5>
-                            <span class="badge ' . $status_class . '">' . $status . '</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <h6 class="card-subtitle mb-2 text-muted">' . $loan_type_name . '</h6>
-                                <p class="card-text small">' . $description . '</p>
+                    // dates format
+                    $date_applied = date("M j, Y", strtotime($row['date_applied']));
+                    $date_approved = date("M j, Y", strtotime($row['date_approved']));
+                    $date_disbursed = date("M j, Y", strtotime($row['date_disbursed']));
 
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <small class="text-muted d-block">Loan Amount</small>
-                                    <strong>₱' . number_format($row['loan_amount'], 2) . '</strong>
-                                </div>
-                                <div class="col-6">
-                                    <small class="text-muted d-block">Interest Rate</small>
-                                    <strong>' . $interest_percent . '</strong>
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <small class="text-muted d-block">Date Applied</small>
-                                    <span>' . date("M j, Y", strtotime($row['date_applied'])) . '</span>
-                                </div>
-                                <div class="col-6">
-                                    <small class="text-muted d-block">Term</small>
-                                    <span>' . $row['loan_term'] . ' months</span>
+                    echo '
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card loan-card h-100 border-0 shadow-sm">
+                            <!-- Card Header with Loan ID and colored indicator -->
+                            <div class="card-header border-0 bg-white position-relative pt-4 pb-2">
+                                <div class="loan-indicator"></div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="fw-bold mb-0">Loan #' . $row['loan_id'] . '</h5>
+                                    <span class="status-badge badge bg-success rounded-pill">Completed</span>
                                 </div>
                             </div>
                             
-                            <div class="row">
-                                <div class="col-12">
+                            <!-- loan details -->
+                            <div class="card-body pt-3">
+                                <!-- Loan Amount and Interest Rate -->
+                                <div class="loan-amount-section p-3 mb-4 bg-light rounded-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-7">
+                                            <small class="text-muted">Loan Amount</small>
+                                            <h4 class="mb-0 text-primary">₱' . number_format($row['loan_amount'], 2) . '</h4>
+                                        </div>
+                                        <div class="col-5 text-end">
+                                            <small class="text-muted">Interest Rate</small>
+                                            <h5 class="mb-0">' . $interest_percent . '</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- dates -->
+                                <div class="important-dates mb-3">
+                                    <h6 class="section-title small fw-bold mb-3">IMPORTANT DATES</h6>
+                                    <div class="date-item d-flex justify-content-between py-2 border-bottom">
+                                        <span class="text-muted small">Date Applied</span>
+                                        <span class="fw-bold">' . $date_applied . '</span>
+                                    </div>
+                                    <div class="date-item d-flex justify-content-between py-2 border-bottom">
+                                        <span class="text-muted small">Date Approved</span>
+                                        <span class="fw-bold">' . $date_approved . '</span>
+                                    </div>
+                                    <div class="date-item d-flex justify-content-between py-2">
+                                        <span class="text-muted small">Date Disbursed</span>
+                                        <span class="fw-bold">' . $date_disbursed . '</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- loan term -->
+                                <div class="loan-term mb-3">
+                                    <div class="d-flex justify-content-between py-2 border-top border-bottom">
+                                        <span class="text-muted">Term Duration</span>
+                                        <span class="fw-bold">' . $row['loan_term'] . ' months</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- balance -->
+                                <div class="outstanding-balance mt-4">
                                     <small class="text-muted d-block">Outstanding Balance</small>
-                                    <h5 class="text-' . ($row['outstanding_balance'] > 0 ? 'danger' : 'success') . '">
-                                        ₱' . number_format($row['outstanding_balance'], 2) . '
-                                    </h5>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0 text-success">
+                                    ₱' . number_format($row['outstanding_balance'], 2) . '
+                                </h4>
+                                <i class="fas fa-check-circle text-success fs-4"></i>
+                                </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer bg-transparent">
-                            <div class="d-flex justify-content-between">
-                                <a href="loan-details.php?id=' . $row['loan_id'] . '" class="btn btn-sm btn-outline-primary">View Details</a>
-                                ' . ($row['outstanding_balance'] > 0 ? '<a href="make-payment.php?id=' . $row['loan_id'] . '" class="btn btn-sm btn-primary">Make Payment</a>' : '') . '
-                            </div>
+                    </div>';
+                }
+            } else {
+                echo '
+                <div class="col-12">
+                    <div class="alert alert-info text-center p-4 shadow-sm border-0">
+                        <div class="alert-content">
+                            <i class="fas fa-info-circle fa-3x text-info mb-3"></i>
+                            <h5>No Active Loan Records</h5>
+                            <p class="text-muted mb-0">You currently don\'t have any active loans in our system.</p>
                         </div>
                     </div>
                 </div>';
             }
-        } else {
-            echo '<div class="col-12"><div class="alert alert-warning text-center">No active loan records found. Apply for a loan today!</div></div>';
-        }
-        ?>
+            ?>
+        </div>
     </div>
 </div>
 

@@ -111,6 +111,22 @@ if ($conn->connect_error) {
         text-decoration-color:rgb(227, 234, 255);
     }
 
+    /*display css*/
+
+     .payment-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        overflow: hidden;
+    }
+    
+    .payment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    .payment-card .card-header {
+        border-left: 4px solid #1E3A8A;
+    }
+
     /*footer css*/
     * {
       margin: 0;
@@ -262,7 +278,26 @@ if ($conn->connect_error) {
 
 <!--table-->
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
+    <!-- Added filter options -->
+    <div class="mb-4 p-3 bg-white rounded shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h4 class="mb-0 text-primary">Your Payment Records</h4>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-md-end gap-2">
+                    <select class="form-select form-select-sm" style="max-width: 150px;">
+                        <option selected>All Time</option>
+                        <option>Last Month</option>
+                        <option>Last 3 Months</option>
+                        <option>This Year</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-4">
         <?php
         $sql = "SELECT * FROM fm_tbl_payment";
@@ -270,36 +305,66 @@ if ($conn->connect_error) {
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
+                // Get payment status (assumed always completed in original)
+                $status = "Completed";
+                $statusClass = "success";
+                
                 echo '
                 <div class="col-md-6 col-lg-4">
-                    <div class="form-card p-4 bg-white border rounded-2" style="height: 100%;">
-                        <h5 class="text-dark mb-2"><b>Payment ID: ' . $row['payment_id'] . '</b></h5>
-                        <p class="text-muted mb-3">Status: <span class="badge bg-primary">Completed</span></p>
-
-                       <ul class="list-unstyled mb-0">
-                                <li class="mb-2">
-                                    <strong class="text-dark">Loan ID:</strong> 
-                                    <span class="text-muted">' . $row['loan_id'] . '</span>
-                                </li>
-                                <li class="mb-2">
-                                    <strong class="text-dark">Amount Paid:</strong> 
-                                    <span class="text-success">₱' . number_format($row['payment_amount'], 2) . '</span>
-                                </li>
-                                <li>
-                                    <strong class="text-dark">Date:</strong> 
-                                    <span class="text-muted">' . date("F j, Y", strtotime($row['payment_date'])) . '</span>
-                                </li>
-                            </ul>
+                    <div class="card shadow-sm h-100 border-0 payment-card">
+                        <!-- Card header with payment ID and date -->
+                        <div class="card-header d-flex justify-content-between align-items-center bg-white border-bottom border-2 border-primary py-3">
+                            <h5 class="mb-0 fs-6 text-primary">
+                                <i class="fas fa-receipt me-2"></i>Payment #' . $row['payment_id'] . '
+                            </h5>
+                            <span class="badge bg-' . $statusClass . ' rounded-pill">' . $status . '</span>
+                        </div>
+                        
+                        <!-- Card body with payment info -->
+                        <div class="card-body">
+                            <!-- Payment amount highlighted -->
+                            <div class="d-flex align-items-center mb-4 p-3 bg-light rounded-3">
+                                <div>
+                                    <p class="text-muted mb-0 small">Amount Paid</p>
+                                    <h4 class="mb-0 text-success">₱' . number_format($row['payment_amount'], 2) . '</h4>
+                                </div>
+                                <div class="ms-auto">
+                                    <i class="fas fa-check-circle fs-3 text-success"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Payment details -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between py-2 border-bottom">
+                                    <span class="text-muted">Loan ID</span>
+                                    <span class="fw-bold">' . $row['loan_id'] . '</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-2">
+                                    <span class="text-muted">Date</span>
+                                    <span class="fw-bold">' . date("F j, Y", strtotime($row['payment_date'])) . '</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Action buttons -->
+                            <div class="d-flex justify-content-between mt-4">
+                            </div>
+                        </div>
                     </div>
                 </div>';
             }
         } else {
-            echo '<div class="col-12"><div class="alert alert-warning text-center">No payment records found.</div></div>';
+            echo '
+            <div class="col-12">
+                <div class="alert alert-warning text-center p-4">
+                    <i class="fas fa-exclamation-circle me-2 fs-4"></i>
+                    <p class="mb-0">No payment records found.</p>
+                    <p class="text-muted small mt-2">Once you make a payment, it will appear here.</p>
+                </div>
+            </div>';
         }
         ?>
     </div>
 </div>
-
     <!--footer-->
 
 <hr class="footer-divider">

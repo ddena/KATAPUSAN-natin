@@ -8,7 +8,7 @@ $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
-include "verifyemail.php";
+include "emailverify.php";
 
 $signup_success = false;
 $signup_error = false;

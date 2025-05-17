@@ -123,7 +123,7 @@
         color: #444242;
     }
 
-    /*query css tbf*/
+    /*query css*/
     .query-background{
       background-color: #FACC15; 
       padding: 2rem 0;
@@ -283,7 +283,7 @@
         </div> 
 
         <div class="profile-icon d-flex justify-content-end">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="user-navbar.php">
                 <img src="profile-icon-transparent.png" alt="Profile">
             </a>
         </div>    

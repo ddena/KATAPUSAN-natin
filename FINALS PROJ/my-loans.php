@@ -6,10 +6,6 @@ $dbase = "db_accounts_cc";
 $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 ?>
 
 <!DOCTYPE html>
@@ -210,7 +206,7 @@ if ($conn->connect_error) {
       margin-bottom: 20px;
     }
 
-    /* Loan Cards Styling */
+    /*display css*/
     .section-header .text-muted {
         font-size: 0.95rem;
     }
@@ -258,7 +254,6 @@ if ($conn->connect_error) {
         font-size: 0.9rem;
     }
     
-    /* Empty state styling */
     .alert-content {
         padding: 2rem 1rem;
     }
@@ -273,7 +268,6 @@ if ($conn->connect_error) {
             <a class="navbar-brand d-flex align-items-center me-3" href="homepage.php">
                 <img src="fundifyme-transparent.png" alt="Fundify Me">
             </a>
-
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
             <span class="navbar-toggler-icon"></span>
             </button>
@@ -293,7 +287,7 @@ if ($conn->connect_error) {
         </div> 
 
         <div class="profile-icon d-flex justify-content-end">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="user-navbar.php">
                 <img src="profile-icon-transparent.png" alt="Profile">
             </a>
         </div>    
@@ -302,7 +296,7 @@ if ($conn->connect_error) {
     </nav>
     <hr class="lower-hr">
     
-    <!--header-->
+<!--header-->
 <div class="header mt-5">
     <h1 class="mt-3"><b>My Loans</b></h1>
     <div class="breadcrumb">
@@ -311,7 +305,6 @@ if ($conn->connect_error) {
       <span> My Loans </span>
     </div> 
   </div>
-
 
 <div class="container my-5">
     <!-- loan types -->
@@ -436,7 +429,7 @@ if ($conn->connect_error) {
 
         <div class="row g-4">
             <?php
-            $sql = "SELECT * FROM fm_tbl_loan";
+            $sql = "SELECT * FROM fm_tbl_loan ORDER BY date_applied DESC";
             $result = $conn->query($sql);
 
             if ($result && $result->num_rows > 0) {
@@ -532,7 +525,7 @@ if ($conn->connect_error) {
     </div>
 </div>
 
-    <!--footer-->
+<!--footer-->
 
 <hr class="footer-divider">
 

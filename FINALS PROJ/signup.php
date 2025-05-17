@@ -8,8 +8,6 @@ $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
-include "emailverify.php";
-
 $signup_success = false;
 $signup_error = false;
 
@@ -20,7 +18,7 @@ $signup_error = false;
     $SUpassword = md5($_POST['password']);
     $role = "User";
 
-    // newly added (otp + logs)
+    // newly added (otp + logs) DI PA TAPOS
 
     $SUotp = rand(000000, 999999); // otp 
     $SUstatus = "Pending";

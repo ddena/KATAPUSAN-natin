@@ -6,10 +6,6 @@ $dbase = "db_accounts_cc";
 $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 ?>
 
 <!DOCTYPE html>
@@ -112,7 +108,6 @@ if ($conn->connect_error) {
     }
 
     /*display css*/
-
      .payment-card {
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         overflow: hidden;
@@ -256,16 +251,16 @@ if ($conn->connect_error) {
         </div> 
 
         <div class="profile-icon d-flex justify-content-end">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="user-navbar.php">
                 <img src="profile-icon-transparent.png" alt="Profile">
             </a>
         </div>    
-
     </div>
     </nav>
+
     <hr class="lower-hr">
     
-    <!--header-->
+<!--header-->
 <div class="header mt-5">
     <h1 class="mt-3"><b>Payment History</b></h1>
     <div class="breadcrumb">
@@ -275,11 +270,8 @@ if ($conn->connect_error) {
     </div> 
   </div>
 
-
-<!--table-->
-
+<!--display-->
 <div class="container mt-5 mb-5">
-    <!-- Added filter options -->
     <div class="mb-4 p-3 bg-white rounded shadow-sm">
         <div class="row align-items-center">
             <div class="col-md-6">
@@ -300,12 +292,12 @@ if ($conn->connect_error) {
 
     <div class="row g-4">
         <?php
-        $sql = "SELECT * FROM fm_tbl_payment";
+        $sql = "SELECT * FROM fm_tbl_payment ORDER BY payment_date DESC";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                // Get payment status (assumed always completed in original)
+
                 $status = "Completed";
                 $statusClass = "success";
                 
@@ -365,8 +357,8 @@ if ($conn->connect_error) {
         ?>
     </div>
 </div>
-    <!--footer-->
 
+<!--footer-->
 <hr class="footer-divider">
 
 <footer>

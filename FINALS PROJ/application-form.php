@@ -9,12 +9,10 @@ $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
-// check the connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Prepare SweetAlert variables
 $alertMessage = '';
 $alertType = '';
 
@@ -414,7 +412,7 @@ if (isset($_POST['apply'])) {
         </div> 
 
         <div class="profile-icon d-flex justify-content-end">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="user-navbar.php">
                 <img src="profile-icon-transparent.png" alt="Profile">
             </a>
         </div>    

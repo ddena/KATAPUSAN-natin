@@ -24,13 +24,11 @@ if(isset($_POST['sub'])){
     $user = $result->fetch_assoc();
     $role = $user['role'];
     $member_id = $user['member_id'];
+    $id = $user['account_id']; // logs
 
-    session_start();
-
-    // storing session variables -- ewan k kung dapat ba to
-    $_SESSION['username'] = $username; 
-    $_SESSION['role'] = $role;
-    $_SESSION['member_id'] = $member_id;
+    // logs
+    $logssql = "Insert into fm_tbl_logs (user_id, action, datetime) VALUES ('" .$id. "', 'Logged In', NOW())";
+    $conn->query($logssql);
 
     // role
     if ($role == 'Admin') {

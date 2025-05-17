@@ -314,7 +314,6 @@ if ($conn->connect_error) {
 
             if ($result_types->num_rows > 0) {
                 while ($type = $result_types->fetch_assoc()) {
-                    // Calculate interest rate based on loan type ID
                     $interest_rate = 0;
                     switch ($type['loan_type_id']) {
                         case 1: $interest_rate = 5; break;

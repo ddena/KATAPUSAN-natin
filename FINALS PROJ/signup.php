@@ -8,6 +8,8 @@ $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
+include "verifyemail.php";
+
 $signup_success = false;
 $signup_error = false;
 
@@ -18,9 +20,12 @@ $signup_error = false;
     $SUpassword = md5($_POST['password']);
     $role = "User";
 
-    // newly added
+    // newly added (otp + logs)
 
-    $insertsql = "INSERT INTO fm_tbl_users (full_name, username, email, password, role) VALUES ('$SUfullname', '$SUusername', '$SUemail', '$SUpassword', '$role')";
+    $SUotp = rand(000000, 999999); // otp 
+    $SUstatus = "Pending";
+
+    $insertsql = "INSERT INTO fm_tbl_users (full_name, username, email, password, role, otp, status) VALUES ('$SUfullname', '$SUusername', '$SUemail', '$SUpassword', '$role', '$SUotp', '$SUstatus')";
 
 
     if ($conn->query($insertsql) === TRUE) {
@@ -28,7 +33,13 @@ $signup_error = false;
       } else {
         $signup_error = true;
       }
+
+      // logs
+    $ccid = $_SESSION['user_id']; 
+    $logssql = "Insert into fm_tbl_logs (user_id, action, datetime) VALUES ('" .$id. "', 'Signed Up', NOW())";
+    $conn->query($logssql);
     } 
+
 ?>
 
 <!DOCTYPE html>
@@ -194,6 +205,7 @@ $signup_error = false;
 
 <?php
 if ($signup_success == true) {
+  send_verification($SUfullname, $SUemail, $SUotp);
   echo '
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>

@@ -274,10 +274,10 @@
                     <a class="nav-link fw-bold" href="application-form.php">APPLY</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#">MY LOANS</a>
+                    <a class="nav-link fw-bold" href="my-loans.php">MY LOANS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#">PAYMENT HISTORY</a>
+                    <a class="nav-link fw-bold" href="payment-history.php">PAYMENT HISTORY</a>
                 </li>
             </ul>
         </div> 

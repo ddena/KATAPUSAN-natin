@@ -400,6 +400,9 @@ if (isset($_POST['apply'])) {
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mx-auto text-center gap-2">
                 <li class="nav-item">
+                    <a class="nav-link fw-bold" href="homepage.php">HOME</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link fw-bold" href="application-form.php">APPLY</a>
                 </li>
                 <li class="nav-item">

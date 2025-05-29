@@ -6,6 +6,29 @@ $dbase = "db_accounts_cc";
 $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
+
+// payment submission
+if ($_POST && isset($_POST['make_payment'])) {
+    $loan_id = intval($_POST['loan_id']);
+    $payment_amount = floatval($_POST['payment_amount']);
+    $payment_date = date('Y-m-d');
+
+    // insert payment
+    $insert_payment = "INSERT INTO fm_tbl_payment (loan_id, payment_amount, payment_date) 
+                       VALUES ($loan_id, $payment_amount, '$payment_date')";
+    
+    if ($conn->query($insert_payment) === TRUE) {
+        // update balance
+        $update_balance = "UPDATE fm_tbl_loan 
+                           SET outstanding_balance = outstanding_balance - $payment_amount 
+                           WHERE loan_id = $loan_id";
+        $conn->query($update_balance);
+
+        $success_message = "Payment of ₱" . number_format($payment_amount, 2) . " has been successfully processed!";
+    } else {
+        $error_message = "Error processing payment. Please try again.";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -13,12 +36,11 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Loans</title>
+    <title>My Loans - Payment System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-
     /*navbar css*/
     .upper-hr{
         border-top: 30px solid #1E3A8A;
@@ -77,7 +99,7 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
         border-top: 1px solid #000000;
         width: 100%;
         margin: 0;
-        opacity: 100%:
+        opacity: 100%;
     }
 
     /*header css*/
@@ -106,7 +128,53 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
         text-decoration: underline;
         text-decoration-color:rgb(227, 234, 255);
     }
+
+    /*loan cards css*/
+    .loan-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        overflow: hidden;
+    }
     
+    .loan-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    .loan-card .card-header {
+        border-left: 4px solid #1E3A8A;
+    }
+
+    .status-badge.paid {
+        background-color: #28a745 !important;
+    }
+
+    .status-badge.not-paid {
+        background-color: #dc3545 !important;
+    }
+
+    .status-badge.partial {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+    }
+
+    .payment-btn {
+        background: linear-gradient(45deg, #1E3A8A, #3B82F6);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .payment-btn:hover {
+        background: linear-gradient(45deg, #1E40AF, #2563EB);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(30, 58, 138, 0.3);
+    }
+
+    .payment-btn:disabled {
+        background: #6c757d;
+        transform: none;
+        box-shadow: none;
+    }
+
     /*footer css*/
     * {
       margin: 0;
@@ -149,8 +217,8 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
     .footer-column ul li {
       margin-bottom: 10px;
-
     }
+    
     .footer-column ul li a {
       text-decoration: none;
       color: #333;
@@ -205,75 +273,27 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
       margin-top: 40px;
       margin-bottom: 20px;
     }
-
-    /*display css*/
-    .section-header .text-muted {
-        font-size: 0.95rem;
-    }
-    
-    .loan-card {
-        transition: transform 0.3s, box-shadow 0.3s;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-    
-    .loan-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-    }
-    
-    .loan-indicator {
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 5px;
-        background-color: #1E3A8A;
-        border-top-left-radius: 5px;
-    }
-    
-    .status-badge {
-        font-size: 0.75rem;
-        padding: 0.35em 0.8em;
-    }
-    
-    .loan-amount-section {
-        border-left: 3px solid #1E3A8A;
-    }
-    
-    .section-title {
-        color: #6c757d;
-        letter-spacing: 1px;
-    }
-    
-    .date-item:last-child {
-        border-bottom: none;
-    }
-    
-    .important-dates .fw-bold {
-        font-size: 0.9rem;
-    }
-    
-    .alert-content {
-        padding: 2rem 1rem;
-    }
 </style>
 </head>
 
-<!--navbar-->
 <body class="bg-light">
+<!--navbar-->
 <hr class="upper-hr">
     <nav class="navbar navbar-expand-lg bg-white">
         <div class="container-fluid px-5">
             <a class="navbar-brand d-flex align-items-center me-3" href="homepage.php">
                 <img src="fundifyme-transparent.png" alt="Fundify Me">
             </a>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
             <span class="navbar-toggler-icon"></span>
             </button>
 
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mx-auto text-center gap-2">
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" href="homepage.php">HOME</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="application-form.php">APPLY</a>
                 </li>
@@ -291,12 +311,32 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
                 <img src="profile-icon-transparent.png" alt="Profile">
             </a>
         </div>    
-
     </div>
     </nav>
+
     <hr class="lower-hr">
-    
-<!--header-->
+
+<!--alerts-->
+<?php if (isset($success_message)) { ?>
+<div class="container mt-4">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <?php echo $success_message; ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+<?php } ?>
+
+<?php if (isset($error_message)) { ?>
+<div class="container mt-4">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <?php echo $error_message; ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+<?php } ?>
+
 <div class="header mt-5">
     <h1 class="mt-3"><b>My Loans</b></h1>
     <div class="breadcrumb">
@@ -434,6 +474,29 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
             if ($result && $result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
+
+                    // determine loan status based on outstanding balance
+                    $outstanding = floatval($row['outstanding_balance']);
+                    $original_amount = floatval($row['loan_amount']);
+                    
+                    if ($outstanding <= 0) {
+                        $status = "Fully Paid";
+                        $statusClass = "bg-success";
+                        $statusIcon = "fas fa-check-circle";
+                        $balanceTextClass = "text-success";
+                    } elseif ($outstanding >= $original_amount) {
+                        $status = "Not Paid";
+                        $statusClass = "bg-danger";
+                        $statusIcon = "fas fa-exclamation-circle";
+                        $balanceTextClass = "text-danger";
+                    } else {
+                        $status = "Partially Paid";
+                        $statusClass = "bg-warning";
+                        $statusIcon = "fas fa-clock";
+                        $balanceTextClass = "text-warning";
+                    }
+
+                    $payment_percentage = $original_amount > 0 ? (($original_amount - $outstanding) / $original_amount) * 100 : 0;
                     $interest_percent = number_format($row['interest_rate'] * 100, 2) . '%';
                     
                     // dates format
@@ -444,12 +507,14 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
                     echo '
                     <div class="col-md-6 col-lg-4">
                         <div class="card loan-card h-100 border-0 shadow-sm">
-                            <!-- Card Header with Loan ID and colored indicator -->
+                            <!-- Card Header with Loan ID and status -->
                             <div class="card-header border-0 bg-white position-relative pt-4 pb-2">
                                 <div class="loan-indicator"></div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="fw-bold mb-0">Loan #' . $row['loan_id'] . '</h5>
-                                    <span class="status-badge badge bg-success rounded-pill">Completed</span>
+                                    <span class="status-badge badge ' . $statusClass . ' rounded-pill">
+                                        <i class="' . $statusIcon . ' me-1"></i>' . $status . '
+                                    </span>
                                 </div>
                             </div>
                             
@@ -466,6 +531,17 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
                                             <small class="text-muted">Interest Rate</small>
                                             <h5 class="mb-0">' . $interest_percent . '</h5>
                                         </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Payment Progress Bar -->
+                                <div class="payment-progress mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small class="text-muted">Payment Progress</small>
+                                        <small class="fw-bold">' . round($payment_percentage) . '%</small>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-success" style="width: ' . $payment_percentage . '%"></div>
                                     </div>
                                 </div>
                                 
@@ -494,16 +570,32 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
                                     </div>
                                 </div>
                                 
-                                <!-- balance -->
-                                <div class="outstanding-balance mt-4">
+                                <!-- Outstanding Balance -->
+                                <div class="outstanding-balance mt-4 mb-3">
                                     <small class="text-muted d-block">Outstanding Balance</small>
                                     <div class="d-flex justify-content-between align-items-center">
-                                <h4 class="mb-0 text-success">
-                                    ₱' . number_format($row['outstanding_balance'], 2) . '
-                                </h4>
-                                <i class="fas fa-check-circle text-success fs-4"></i>
+                                        <h4 class="mb-0 ' . $balanceTextClass . '">
+                                            ₱' . number_format($outstanding, 2) . '
+                                        </h4>
+                                        <i class="' . $statusIcon . ' ' . str_replace('bg-', 'text-', $statusClass) . ' fs-4"></i>
+                                    </div>
                                 </div>
-                                </div>
+                                
+                                <!-- Payment Button -->
+                                <div class="d-grid mt-4">';
+                    
+                    if ($outstanding > 0) {
+                        echo '<button class="btn btn-primary payment-btn" data-bs-toggle="modal" data-bs-target="#paymentModal" 
+                                      onclick="setPaymentDetails(' . $row['loan_id'] . ', ' . $outstanding . ')">
+                                  <i class="fas fa-credit-card me-2"></i>Make Payment
+                              </button>';
+                    } else {
+                        echo '<button class="btn btn-success" disabled>
+                                  <i class="fas fa-check me-2"></i>Loan Paid Off
+                              </button>';
+                    }
+                    
+                    echo '      </div>
                             </div>
                         </div>
                     </div>';
@@ -525,8 +617,105 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
     </div>
 </div>
 
-<!--footer-->
+<!-- payment modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="paymentModalLabel">
+                    <i class="fas fa-credit-card me-2"></i>Make a Payment
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            
+            <form method="POST" action="">
+                <div class="modal-body">
+                    <div class="row">
 
+                        <!-- payment details -->
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-primary">Loan Details</h6>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Loan ID:</small>
+                                        <span class="fw-bold ms-2" id="modalLoanId">-</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Outstanding Balance:</small>
+                                        <span class="fw-bold text-danger ms-2" id="modalBalance">₱0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- payment form -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="paymentAmount" class="form-label">Payment Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₱</span>
+                                    <input type="number" class="form-control" id="paymentAmount" name="payment_amount" 
+                                           step="0.01" min="0.01" required>
+                                </div>
+                                <div class="form-text">Amount to Be Paid</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Payment Method</label>
+                                <select class="form-select" id="paymentMethod" required>
+                                    <option value="">Select Payment Method</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="bank_transfer">Bank Transfer</option>
+                                    <option value="gcash">GCash</option>
+                                    <option value="paymaya">PayMaya</option>
+                                    <option value="credit_card">Credit Card</option>
+                                </select>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-outline-secondary" 
+                                        onclick="payFullAmount()">Pay Full Amount</button>
+                                <button type="button" class="btn btn-outline-primary" 
+                                        onclick="payMinimum()">Pay Minimum (₱500.00)</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- summary of payments -->
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-info-circle me-2"></i>Payment Summary
+                        </h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">Payment Amount:</small><br>
+                                <span class="fw-bold" id="summaryAmount">₱0.00</span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Remaining Balance:</small><br>
+                                <span class="fw-bold" id="summaryRemaining">₱0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="make_payment" class="btn btn-primary">
+                        <i class="fas fa-check me-2"></i>Process Payment
+                    </button>
+                </div>
+                
+                <input type="hidden" name="loan_id" id="hiddenLoanId">
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--footer-->
 <hr class="footer-divider">
 
 <footer>
@@ -589,7 +778,62 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
     <div class="footer-bottom">
       Copyright @ 2025. All Rights Reserved.
     </div>
-  </footer>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+
+<script>
+let currentLoanId = 0;
+let currentBalance = 0;
+
+function setPaymentDetails(loanId, balance) {
+    currentLoanId = loanId;
+    currentBalance = balance;
+    
+    document.getElementById('modalLoanId').textContent = loanId;
+    document.getElementById('modalBalance').textContent = '₱' + balance.toLocaleString('en-US', {minimumFractionDigits: 2});
+    document.getElementById('hiddenLoanId').value = loanId;
+    
+    // Reset form
+    document.getElementById('paymentAmount').value = '';
+    document.getElementById('paymentMethod').value = '';
+    updateSummary();
+}
+
+function payFullAmount() {
+    document.getElementById('paymentAmount').value = currentBalance.toFixed(2);
+    updateSummary();
+}
+
+function payMinimum() {
+    const minimumPayment = Math.min(500, currentBalance);
+    document.getElementById('paymentAmount').value = minimumPayment.toFixed(2);
+    updateSummary();
+}
+
+function updateSummary() {
+    const paymentAmount = parseFloat(document.getElementById('paymentAmount').value) || 0;
+    const remainingBalance = Math.max(0, currentBalance - paymentAmount);
+    
+    document.getElementById('summaryAmount').textContent = '₱' + paymentAmount.toLocaleString('en-US', {minimumFractionDigits: 2});
+    document.getElementById('summaryRemaining').textContent = '₱' + remainingBalance.toLocaleString('en-US', {minimumFractionDigits: 2});
+}
+
+// updates summary when payment amount changes
+document.getElementById('paymentAmount').addEventListener('input', updateSummary);
+
+// validation of payment amount 
+document.getElementById('paymentAmount').addEventListener('input', function() {
+    const value = parseFloat(this.value);
+    if (value > currentBalance) {
+        this.setCustomValidity('Payment amount cannot exceed outstanding balance');
+    } else if (value <= 0) {
+        this.setCustomValidity('Payment amount must be greater than 0');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+</script>
+
 </body>
 </html>

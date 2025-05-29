@@ -13,12 +13,11 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment History</title>
+    <title>My Loans - Payment System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-
     /*navbar css*/
     .upper-hr{
         border-top: 30px solid #1E3A8A;
@@ -77,7 +76,7 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
         border-top: 1px solid #000000;
         width: 100%;
         margin: 0;
-        opacity: 100%:
+        opacity: 100%;
     }
 
     /*header css*/
@@ -107,19 +106,32 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
         text-decoration-color:rgb(227, 234, 255);
     }
 
-    /*display css*/
-     .payment-card {
+    /*loan cards css*/
+    .loan-card {
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         overflow: hidden;
     }
     
-    .payment-card:hover {
+    .loan-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
     }
     
-    .payment-card .card-header {
+    .loan-card .card-header {
         border-left: 4px solid #1E3A8A;
+    }
+
+    .status-badge.paid {
+        background-color: #28a745 !important;
+    }
+
+    .status-badge.not-paid {
+        background-color: #dc3545 !important;
+    }
+
+    .status-badge.partial {
+        background-color: #ffc107 !important;
+        color: #000 !important;
     }
 
     /*footer css*/
@@ -164,8 +176,8 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
     .footer-column ul li {
       margin-bottom: 10px;
-
     }
+    
     .footer-column ul li a {
       text-decoration: none;
       color: #333;
@@ -219,12 +231,12 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
       border-top: 1px solid #ccc;
       margin-top: 40px;
       margin-bottom: 20px;
-    }     
+    }
 </style>
 </head>
 
-<!--navbar-->
 <body class="bg-light">
+<!--navbar-->
 <hr class="upper-hr">
     <nav class="navbar navbar-expand-lg bg-white">
         <div class="container-fluid px-5">
@@ -238,6 +250,9 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mx-auto text-center gap-2">
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" href="homepage.php">HOME</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="application-form.php">APPLY</a>
                 </li>
@@ -262,83 +277,100 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
     
 <!--header-->
 <div class="header mt-5">
-    <h1 class="mt-3"><b>Payment History</b></h1>
+    <h1 class="mt-3"><b>Loan Status</b></h1>
     <div class="breadcrumb">
       <span><a href="homepage.php"> Home </a></span> 
       <span class="mx-2"> / </span> 
-      <span> Payment History </span>
+      <span> Loan Status </span>
     </div> 
-  </div>
+</div>
 
 <!--display-->
 <div class="container mt-5 mb-5">
     <div class="mb-4 p-3 bg-white rounded shadow-sm">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h4 class="mb-0 text-primary">Your Payment Records</h4>
-            </div>
-            <div class="col-md-6">
-                <div class="d-flex justify-content-md-end gap-2">
-                    <select class="form-select form-select-sm" style="max-width: 150px;">
-                        <option selected>All Time</option>
-                        <option>Last Month</option>
-                        <option>Last 3 Months</option>
-                        <option>This Year</option>
-                    </select>
-                </div>
+                <h4 class="mb-0 text-primary">Your Active Loans</h4>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
         <?php
-        $sql = "SELECT * FROM fm_tbl_payment ORDER BY payment_date DESC";
+        $sql = "SELECT * FROM fm_tbl_loan ORDER BY date_applied DESC";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
+                // Determine loan status
+                $outstanding = floatval($row['outstanding_balance']);
+                $original_amount = floatval($row['loan_amount']);
+                
+                if ($outstanding <= 0) {
+                    $status = "Fully Paid";
+                    $statusClass = "paid";
+                    $statusIcon = "fas fa-check-circle";
+                } elseif ($outstanding >= $original_amount) {
+                    $status = "Not Paid";
+                    $statusClass = "not-paid";
+                    $statusIcon = "fas fa-exclamation-circle";
+                } else {
+                    $status = "Partially Paid";
+                    $statusClass = "partial";
+                    $statusIcon = "fas fa-clock";
+                }
 
-                $status = "Completed";
-                $statusClass = "success";
+                $payment_percentage = (($original_amount - $outstanding) / $original_amount) * 100;
                 
                 echo '
                 <div class="col-md-6 col-lg-4">
-                    <div class="card shadow-sm h-100 border-0 payment-card">
-                        <!-- Card header with payment ID and date -->
+                    <div class="card shadow-sm h-100 border-0 loan-card">
+                        <!-- Card header with loan ID and status -->
                         <div class="card-header d-flex justify-content-between align-items-center bg-white border-bottom border-2 border-primary py-3">
                             <h5 class="mb-0 fs-6 text-primary">
-                                <i class="fas fa-receipt me-2"></i>Payment #' . $row['payment_id'] . '
+                                <i class="fas fa-file-contract me-2"></i>Loan #' . $row['loan_id'] . '
                             </h5>
-                            <span class="badge bg-' . $statusClass . ' rounded-pill">' . $status . '</span>
+                            <span class="badge status-badge ' . $statusClass . ' rounded-pill">
+                                <i class="' . $statusIcon . ' me-1"></i>' . $status . '
+                            </span>
                         </div>
                         
-                        <!-- Card body with payment info -->
+                        <!-- Card body with loan details -->
                         <div class="card-body">
-                            <!-- Payment amount highlighted -->
+                            <!-- Outstanding balance highlighted -->
                             <div class="d-flex align-items-center mb-4 p-3 bg-light rounded-3">
                                 <div>
-                                    <p class="text-muted mb-0 small">Amount Paid</p>
-                                    <h4 class="mb-0 text-success">₱' . number_format($row['payment_amount'], 2) . '</h4>
+                                    <p class="text-muted mb-0 small">Outstanding Balance</p>
+                                    <h4 class="mb-0 ' . ($outstanding <= 0 ? 'text-success' : 'text-danger') . '">₱' . number_format($outstanding, 2) . '</h4>
                                 </div>
                                 <div class="ms-auto">
-                                    <i class="fas fa-check-circle fs-3 text-success"></i>
+                                    <div class="text-center">
+                                        <div class="progress mb-2" style="height: 8px; width: 60px;">
+                                            <div class="progress-bar bg-success" style="width: ' . $payment_percentage . '%"></div>
+                                        </div>
+                                        <small class="text-muted">' . round($payment_percentage) . '%</small>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <!-- Payment details -->
+                            <!-- Loan details -->
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between py-2 border-bottom">
-                                    <span class="text-muted">Loan ID</span>
-                                    <span class="fw-bold">' . $row['loan_id'] . '</span>
+                                    <span class="text-muted">Original Amount</span>
+                                    <span class="fw-bold">₱' . number_format($row['loan_amount'], 2) . '</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-2 border-bottom">
+                                    <span class="text-muted">Interest Rate</span>
+                                    <span class="fw-bold">' . $row['interest_rate'] . '%</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-2 border-bottom">
+                                    <span class="text-muted">Term</span>
+                                    <span class="fw-bold">' . $row['loan_term'] . ' months</span>
                                 </div>
                                 <div class="d-flex justify-content-between py-2">
-                                    <span class="text-muted">Date</span>
-                                    <span class="fw-bold">' . date("F j, Y", strtotime($row['payment_date'])) . '</span>
+                                    <span class="text-muted">Date Applied</span>
+                                    <span class="fw-bold">' . date("M j, Y", strtotime($row['date_applied'])) . '</span>
                                 </div>
-                            </div>
-                            
-                            <!-- Action buttons -->
-                            <div class="d-flex justify-content-between mt-4">
                             </div>
                         </div>
                     </div>
@@ -347,10 +379,12 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
         } else {
             echo '
             <div class="col-12">
-                <div class="alert alert-warning text-center p-4">
-                    <i class="fas fa-exclamation-circle me-2 fs-4"></i>
-                    <p class="mb-0">No payment records found.</p>
-                    <p class="text-muted small mt-2">Once you make a payment, it will appear here.</p>
+                <div class="alert alert-info text-center p-4">
+                    <i class="fas fa-info-circle me-2 fs-4"></i>
+                    <p class="mb-0">You don\'t have any loans yet.</p>
+                    <p class="text-muted small mt-2">
+                        <a href="application-form.php" class="text-decoration-none">Apply for a loan</a> to get started.
+                    </p>
                 </div>
             </div>';
         }
@@ -421,8 +455,9 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
     <div class="footer-bottom">
       Copyright @ 2025. All Rights Reserved.
     </div>
-  </footer>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+
 </body>
 </html>
-

@@ -277,11 +277,11 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
     
 <!--header-->
 <div class="header mt-5">
-    <h1 class="mt-3"><b>Loan Status</b></h1>
+    <h1 class="mt-3"><b>Payment History</b></h1>
     <div class="breadcrumb">
       <span><a href="homepage.php"> Home </a></span> 
       <span class="mx-2"> / </span> 
-      <span> Loan Status </span>
+      <span> Payment History </span>
     </div> 
 </div>
 

@@ -23,16 +23,16 @@ function send_verification($SUfullname, $SUemail, $SUotp){
     
         //Recipients
         $mail->setFrom('caesseycaparal13@gmail.com','Fundify Me');
-        $mail->addAddress($email);     // Add a recipient
+        $mail->addAddress($SUemail);     // Add a recipient
         //Content
         $mail->isHTML(true);  // Set email format to HTML
         $mail->Subject = "OTP Verification";
-        $mail->Body    = '<h3 style="color: #004aad; margin-bottom: 20px;">Hello, '.$fullname.'</h3>
+        $mail->Body    = '<h3 style="color: #004aad; margin-bottom: 20px;">Hello, '.$SUfullname.'</h3>
         <p>Thank you for signing up at <strong>Fundify Me</strong>.</p>
         <p style="margin-top: 20px;">To complete your registration, please proceed to the OTP verification page and enter the code below to verify your email address.</p>
         <p>Verification code:</p>
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center; font-size: 24px; color: #1E3A8A; font-weight: bold;">
-        '.$otp.' </div>
+        '.$SUotp.' </div>
         <p style="margin-top:10px;font-size: 14px; color: #6c757d;">— Fundify Me Team</p>
         ';
         $mail->send();

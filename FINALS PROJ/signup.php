@@ -8,8 +8,7 @@ $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
-$signup_success = false;
-$signup_error = false;
+include "emailverify.php";
 
   if(isset($_POST['sub'])){
     $SUfullname = $_POST['fullname'];
@@ -18,22 +17,22 @@ $signup_error = false;
     $SUpassword = md5($_POST['password']);
     $role = "User";
 
-    // newly added (otp + logs) DI PA TAPOS
-
-    $SUotp = rand(000000, 999999); // otp 
+    $SUotp = rand(000000, 999999); 
     $SUstatus = "Pending";
 
     $insertsql = "INSERT INTO fm_tbl_users (full_name, username, email, password, role, otp, status) VALUES ('$SUfullname', '$SUusername', '$SUemail', '$SUpassword', '$role', '$SUotp', '$SUstatus')";
 
 
     if ($conn->query($insertsql) === TRUE) {
-        $signup_success = true;
-      } else {
-        $signup_error = true;
-      }
+      send_verification($SUfullname, $SUemail, $SUotp);
+      header("Location: signup.php?signup=success");
+      exit;
+    } else {
+      header("Location: signup.php?signup=error");
+      exit;
+    }
 
-      // logs
-    $ccid = $_SESSION['user_id']; 
+    $id = $_POST['user_id']; 
     $logssql = "Insert into fm_tbl_logs (user_id, action, datetime) VALUES ('" .$id. "', 'Signed Up', NOW())";
     $conn->query($logssql);
     } 
@@ -202,33 +201,30 @@ $signup_error = false;
 </div>
 
 <?php
-if ($signup_success == true) {
-  send_verification($SUfullname, $SUemail, $SUotp);
-  echo '
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script>
-    Swal.fire({
-      icon: "success",
-      title: "Account Created!",
-      text: "You can now login.",
-      confirmButtonText: "OK"
-    });
-  </script>';
-}
-
-if ($signup_error == true) {
-  echo '
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script>
-    Swal.fire({
-      icon: "error",
-      title: "Signup Failed",
-      text: "Something went wrong. Try again."
-    });
-  </script>';
+if (isset($_GET['signup'])) {
+    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+    if ($_GET['signup'] == 'success') {
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Account Created!',
+            text: 'You can now login.',
+            confirmButtonText: 'OK'
+        });
+        </script>";
+    } else if ($_GET['signup'] == 'error') {
+        echo "
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Signup Failed',
+            text: 'Something went wrong. Try again.'
+        });
+        </script>";
+    }
 }
 ?>
-
 </body>
 </html>
 

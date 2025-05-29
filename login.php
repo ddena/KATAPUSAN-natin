@@ -33,7 +33,7 @@ if(isset($_POST['sub'])){
     } elseif ($user['role'] == 'Employee') {
       header('Location: employee_dashboard.php'); 
     } else {
-      header('Location: application-form.php'); 
+      header('Location: user_homepage.php'); 
     }
 
     exit(); 

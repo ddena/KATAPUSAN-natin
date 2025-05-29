@@ -400,7 +400,7 @@ if (isset($_POST['apply'])) {
 <hr class="upper-hr">
     <nav class="navbar navbar-expand-lg bg-white">
         <div class="container-fluid px-5">
-            <a class="navbar-brand d-flex align-items-center me-3" href="homepage.php">
+            <a class="navbar-brand d-flex align-items-center me-3" href="user_homepage.php">
                 <img src="img/fundifyme-transparent.png" alt="Fundify Me">
             </a>
 
@@ -410,6 +410,9 @@ if (isset($_POST['apply'])) {
 
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mx-auto text-center gap-2">
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" href="user_homepage.php">HOME</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="application-form.php">APPLY</a>
                 </li>
@@ -436,7 +439,7 @@ if (isset($_POST['apply'])) {
 <div class="header mt-5">
     <h1 class="mt-3"><b>Application Form</b></h1>
     <div class="breadcrumb">
-      <span><a href="homepage.php"> Home </a></span> 
+      <span><a href="user_homepage.php"> Home </a></span> 
       <span class="mx-2"> / </span> 
       <span> Loan Apply Form </span>
     </div> 

@@ -1,0 +1,154 @@
+/* NAVIGATION */
+
+.upper-hr {
+  border-top: 30px solid #1e3a8a;
+  width: 100%;
+  margin: 0;
+  opacity: 100%;
+}
+
+.navbar-brand img {
+  height: 100px;
+  width: auto;
+  max-width: 250px;
+  object-fit: contain;
+}
+
+.navbar-nav {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+}
+
+.main-nav {
+  gap: 5rem;
+}
+
+.nav-item {
+  font-size: 1rem;
+  font-weight: bolder;
+}
+
+.nav-link {
+  color: #1e3a8a !important;
+}
+
+.nav-link img {
+  margin-left: auto;
+  padding: 10px 0px;
+  height: 70px;
+}
+
+.nav-link:hover,
+.nav-link.active,
+.nav-link.active:hover {
+  color: #4c5c8a !important;
+  text-shadow: 0 0 6px rgba(212, 224, 179, 0.808);
+  transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+}
+
+.lower-hr {
+  border-top: 2px solid #b9b0b0;
+  width: 100%;
+  margin: 0;
+  opacity: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 991.98px) {
+  .offcanvas .offcanvas-body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .offcanvas .navbar-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    gap: 1rem;
+  }
+
+  .offcanvas .main-nav {
+    width: 100%;
+    padding: 1rem 0;
+  }
+
+  .offcanvas .nav-item {
+    width: 100%;
+    margin: 0;
+  }
+
+  .offcanvas .nav-link {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .offcanvas .nav-link img {
+    display: none;
+  }
+}
+
+/* OVERVIEW.php */
+
+.admin_banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.admin_banner img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  filter: brightness(60%);
+}
+
+.banner_text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  color: white !important;
+  text-shadow: 0 0 6px rgba(93, 96, 96, 0.808);
+  text-align: center;
+}
+
+/* BORROWER.php */
+
+.search_bar {
+  background-color: #1e3a8a;
+  padding: 1rem;
+  gap: 0;
+}
+
+.srch-inp {
+  border-bottom-right-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+.btn-set {
+  background-color: #c6ceee !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-left-radius: 0 !important;
+}
+
+.btn-set:hover {
+  background-color: #7d8fc6 !important;
+  transition: color 0.5s ease-in-out;
+}
+
+.custom-table {
+  background-color: #7d8fc6 !important; /* Change to any color you want */
+}

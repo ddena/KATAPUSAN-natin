@@ -89,6 +89,8 @@ $user_id = $_SESSION['user_id'];
                     </div>
                 </div>
             </div>
+
+            <!-- Add button -->
         
             <div class="modal fade" id="addBorrowerModal" tabindex="-1" aria-labelledby="addBorrowerModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -174,10 +176,10 @@ $user_id = $_SESSION['user_id'];
                 ?>
                     <td>
                         <div class="d-flex gap-1">
-                            <!-- Edit button triggers modal -->
+                            <!-- Edit button -->
                             <button class="btn btn-md btn-edit" data-bs-toggle="modal" data-bs-target="#editModal<?= $borrower_field['member_id']; ?>">Edit</button>
 
-                            <!-- Delete form -->
+                            <!-- Delete button -->
                             <form action="crud_btn.php" method="post" onsubmit="return confirm('Are you sure you want to delete this borrower?')">
                                 <input type="hidden" name="action" value="delete_borrower">
                                 <input type="hidden" name="member_id" value="<?= $borrower_field['member_id']; ?>">

@@ -85,14 +85,6 @@ if (isset($_POST['apply'])) {
                     ('$loan_amount', '$interest_rate', '$loan_term', '$date_applied', '$date_approved', '$date_disbursed', '$total_amount_due', '$member_id')";
 
         if ($conn->query($sql_loan) === TRUE) {
-            $loan_id = $conn->insert_id;
-            $payment_amount = $total_amount_due;
-            $payment_date = date("Y-m-d");
-
-            $sql_payment = "INSERT INTO fm_tbl_payment (loan_id, payment_amount, payment_date) 
-                            VALUES ('$loan_id', '$payment_amount', '$payment_date')";
-            $conn->query($sql_payment);
-
             $alertType = 'success';
             $alertMessage = 'Loan application and payment record submitted successfully!';
         } else {

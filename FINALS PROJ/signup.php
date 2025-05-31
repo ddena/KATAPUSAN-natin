@@ -25,7 +25,7 @@ include "emailverify.php";
 
     if ($conn->query($insertsql) === TRUE) {
       send_verification($SUfullname, $SUemail, $SUotp);
-      header("Location: signup.php?signup=success");
+      header("Location: otp-dashboard.php?signup=success");
       exit;
     } else {
       header("Location: signup.php?signup=error");

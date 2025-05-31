@@ -7,62 +7,24 @@ $port = 3308;
 
 $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
-    // user info
-    $sql_users = "SELECT user_id, full_name, email FROM fm_tbl_users";
-    $users_result = $conn->query($sql_users);
+$sql_users = "SELECT user_id, full_name, email FROM fm_tbl_users ORDER BY user_id DESC LIMIT 1";
+$users_result = $conn->query($sql_users);
 
-    // member info
-    $sql_members = "SELECT contant_information, address FROM fm_tbl_member";
-    $members_result = $conn->query($sql_members);
+$sql_members = "SELECT contant_information, address FROM fm_tbl_member ORDER BY member_id DESC LIMIT 1";
 
-    $users = array();
-    $members = array();
+$members_result = $conn->query($sql_members);
 
-    if ($users_result && $users_result->num_rows > 0) {
-        while ($row = $users_result->fetch_assoc()) {
-            $users[] = $row;
-        }
-    }
+$currentUser = null;
+$currentMember = null;
 
-    if ($members_result && $members_result->num_rows > 0) {
-        while ($row = $members_result->fetch_assoc()) {
-            $members[] = $row;
-        }
-    }
+if ($users_result && $users_result->num_rows > 0) {
+    $currentUser = $users_result->fetch_assoc();
+}
 
-    $currentIndex = 0;
-    if (isset($_GET['index'])) {
-    $currentIndex = intval($_GET['index']);
-    }
-    
-    if ($currentIndex < 0 || $currentIndex >= count($users)) {
-        $currentIndex = 0;
-    }
-    
-    $currentUser = null;
-    $currentMember = null;
+if ($members_result && $members_result->num_rows > 0) {
+    $currentMember = $members_result->fetch_assoc();
+}
 
-    if (isset($users[$currentIndex])) {
-        $currentUser = $users[$currentIndex];
-    }
-    if (isset($members[$currentIndex])) {
-        $currentMember = $members[$currentIndex];
-    }
-
-    $prevIndex = 0;
-    $nextIndex = 0;
-
-    if ($currentIndex > 0) {
-        $prevIndex = $currentIndex - 1;
-    } else {
-        $prevIndex = count($users) - 1;
-    }
-
-    if ($currentIndex < count($users) - 1) {
-        $nextIndex = $currentIndex + 1;
-    } else {
-        $nextIndex = 0;
-    }
 ?>
 
 <!DOCTYPE html>
@@ -76,7 +38,6 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-
     /*navbar css*/
     .upper-hr{
         border-top: 30px solid #1E3A8A;
@@ -135,11 +96,10 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
         border-top: 1px solid #000000;
         width: 100%;
         margin: 0;
-        opacity: 100%:
+        opacity: 100%;
     }
 
     /*display css*/
-
     .user-avatar {
         font-size: 4rem;
         color: #0d6efd;
@@ -150,7 +110,6 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
     }
 
     /*footer css*/
-
     * {
       margin: 0;
       padding: 0;
@@ -192,8 +151,8 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
 
     .footer-column ul li {
       margin-bottom: 10px;
-
     }
+    
     .footer-column ul li a {
       text-decoration: none;
       color: #333;
@@ -248,13 +207,12 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
       margin-top: 40px;
       margin-bottom: 20px;
     }    
-
     </style>
 </head>
 
 <body class="bg-light">
+    
 <!--navbar-->
-<body class="bg-light">
 <hr class="upper-hr">
     <nav class="navbar navbar-expand-lg bg-white">
         <div class="container-fluid px-5">
@@ -288,7 +246,6 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
                 <img src="profile-icon-transparent.png" alt="Profile">
             </a>
         </div>    
-
     </div>
     </nav>
     <hr class="lower-hr">
@@ -298,15 +255,7 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
         <div class="col-md-8">
             <div class="card border-0 rounded-3">
                 <div class="card-header bg-primary text-white p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="?index=<?= $prevIndex; ?>" class="btn btn-light btn-sm">
-                            <i class="bi bi-chevron-left"></i> Previous
-                        </a>
-                        <h4 class="mb-0">User Information</h4>
-                        <a href="?index=<?= $nextIndex; ?>" class="btn btn-light btn-sm">
-                            Next <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </div>
+                    <h4 class="mb-0 text-center">Most Recent User</h4>
                 </div>
 
                 <?php if ($currentUser && $currentMember) { ?>
@@ -350,12 +299,6 @@ $conn = new mysqli($servername, $username, $password, $dbase, $port);
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="card-footer bg-white text-center p-3 border-top">
-                        <div class="text-muted">
-                            <small>Showing user <?= ($currentIndex + 1); ?> of <?= count($users); ?></small>
                         </div>
                     </div>
                 <?php } else { ?>

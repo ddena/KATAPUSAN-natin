@@ -28,12 +28,9 @@ if (isset($_POST['apply'])) {
     $imagepath = "fm-images/".basename($_FILES['upload_img']['name']); 
     move_uploaded_file($_FILES['upload_img']['tmp_name'], $imagepath);
 
-    $sql_user = "INSERT INTO fm_tbl_users (img_path) VALUES ('$imagepath')";
-    $conn->query($sql_user);
-
     // insert member info into fm_tbl_member
-    $sql_member = "INSERT INTO fm_tbl_member (member_name, contant_information, address)
-                   VALUES ('$full_name', '$contact', '$address')";
+    $sql_member = "INSERT INTO fm_tbl_member (member_name, contant_information, address, img_path)
+                   VALUES ('$full_name', '$contact', '$address', '$imagepath')";
     if ($conn->query($sql_member) === TRUE) {
         $member_id = $conn->insert_id;
     } else {

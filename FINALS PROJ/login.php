@@ -32,7 +32,7 @@ if(isset($_POST['sub'])){
 
     // role
     if ($role == 'Admin') {
-      header('Location: kc-admin-dashboard.php'); 
+      header('Location: admin_dashboard.php'); 
     } elseif ($role == 'Employee') {
       header('Location: employee_dashboard.php'); 
     } else {

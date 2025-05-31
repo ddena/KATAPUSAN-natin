@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Admin Overview</title>
+        <title>Employee Overview</title>
 
         <meta charset="utf-8" />
         <meta
@@ -23,7 +23,7 @@
             <hr class = "upper-hr">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <a class="navbar-brand d-flex align-items-center me-3" href="admin_dashboard.php">
+                    <a class="navbar-brand d-flex align-items-center me-3" href="employee_dashboard.php">
                     <img src="img/fundifyme-transparent.png" alt="Fundify Me" />
                     </a>
 
@@ -39,19 +39,17 @@
 
                     <div class="offcanvas-body">
                         <ul class="navbar-nav mx-auto main-nav">
-                        <li class="nav-item"><a class="nav-link active" href="admin_dashboard.php">OVERVIEW</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_borrower.php">BORROWERS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_loan.php">LOANS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_payments.php">PAYMENTS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_users.php">USERS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_logs.php">LOGS</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="employee_dashboard.php">OVERVIEW</a></li>
+                        <li class="nav-item"><a class="nav-link" href="em_borrower.php">BORROWERS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="em_loan.php">LOANS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="em_payments.php">PAYMENTS</a></li>
                         </ul>
 
                         <ul class="navbar-nav ms-auto">
                         <li class="nav-item dropdown">
                             <a class="nav-link nav-prof dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="img/profile-icon-transparent.png" alt="Profile" />
-                            <span>ADMIN</span>
+                            <span>EMPLOYEE</span>
                             </a>
                             <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="login.php">Log Out</a></li>
@@ -69,7 +67,7 @@
         <div class="container-fluid">
             <div class="row admin_banner">
                 <div class="banner_text">
-                    <h1 class= "display-1">Hello, Admin!</h1>
+                    <h1 class= "display-1">Hello, Employee!</h1>
                 </div>
                 <img src="img/adm_banner.jpg" alt="Banner">
             </div>

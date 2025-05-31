@@ -7,7 +7,7 @@ $user_id = $_SESSION['user_id'];
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Admin Payments</title>
+        <title>Employee Payments</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
@@ -23,7 +23,7 @@ $user_id = $_SESSION['user_id'];
                 <hr class="upper-hr" />
                 <nav class="navbar navbar-expand-lg">
                     <div class="container-fluid">
-                        <a class="navbar-brand d-flex align-items-center me-3" href="admin_dashboard.php">
+                        <a class="navbar-brand d-flex align-items-center me-3" href="employee_dashboard.php">
                             <img src="img/fundifyme-transparent.png" alt="Fundify Me" />
                         </a>
                         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
@@ -37,18 +37,16 @@ $user_id = $_SESSION['user_id'];
                             </div>
                             <div class="offcanvas-body">
                                 <ul class="navbar-nav mx-auto main-nav">
-                                    <li class="nav-item"><a class="nav-link" href="admin_dashboard.php">OVERVIEW</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="ad_borrower.php">BORROWERS</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="ad_loan.php">LOANS</a></li>
-                                    <li class="nav-item"><a class="nav-link active" href="ad_payments.php">PAYMENTS</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="ad_users.php">USERS</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="ad_logs.php">LOGS</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="employee_dashboard.php">OVERVIEW</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="em_borrower.php">BORROWERS</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="em_loan.php">LOANS</a></li>
+                                    <li class="nav-item"><a class="nav-link active" href="em_payments.php">PAYMENTS</a></li>
                                 </ul>
                                 <ul class="navbar-nav ms-auto">
                                     <li class="nav-item dropdown">
                                         <a class="nav-link nav-prof dropdown-toggle" href="#" data-bs-toggle="dropdown">
                                             <img src="img/profile-icon-transparent.png" alt="Profile" />
-                                            <span>ADMIN</span>
+                                            <span>EMPLOYEE</span>
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" href="login.php">Log Out</a></li>
@@ -69,7 +67,7 @@ $user_id = $_SESSION['user_id'];
                             <h2 class="text-light mb-2">PAYMENT HISTORY</h2>
                             <div class="d-flex align-items-center">
                                 <input type="button" value="ADD +" class="btn fw-bold btn-add me-3" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
-                                <form method="POST" action="ad_payments.php" class="d-flex flex-nowrap">
+                                <form method="POST" action="em_payments.php" class="d-flex flex-nowrap">
                                     <input type="search" name="search_in" placeholder="Search" class="form-control srch-inp">
                                     <input type="submit" name="btn_search" value="🔍︎" class="btn btn-srch">
                                 </form>
@@ -129,7 +127,7 @@ $user_id = $_SESSION['user_id'];
                             payment_amount LIKE '$search_in%' OR 
                             payment_date LIKE '$search_in%'";
                     } else {
-                        $selectsql = "SELECT * FROM tbl_payment ORDER BY payment_date DESC";
+                        $selectsql = "SELECT * FROM tbl_payment";
                     }
 
                     $result = $conn->query($selectsql);

@@ -3,12 +3,12 @@ session_start();
 
 $user_id = $_SESSION['user_id'];
 
-?>
 
+?>
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Admin Borrowers</title>
+        <title>Employee Borrowers</title>
 
         <meta charset="utf-8" />
         <meta
@@ -31,7 +31,7 @@ $user_id = $_SESSION['user_id'];
             <hr class = "upper-hr">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <a class="navbar-brand d-flex align-items-center me-3" href="admin_dashboard.php">
+                    <a class="navbar-brand d-flex align-items-center me-3" href="employee_dashboard.php">
                     <img src="img/fundifyme-transparent.png" alt="Fundify Me" />
                     </a>
 
@@ -47,19 +47,17 @@ $user_id = $_SESSION['user_id'];
 
                     <div class="offcanvas-body">
                         <ul class="navbar-nav mx-auto main-nav">
-                        <li class="nav-item"><a class="nav-link" href="admin_dashboard.php">OVERVIEW</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="ad_borrower.php">BORROWERS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_loan.php">LOANS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_payments.php">PAYMENTS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_users.php">USERS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_logs.php">LOGS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="employee_dashboard.php">OVERVIEW</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="em_borrower.php">BORROWERS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="em_loan.php">LOANS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="em_payments.php">PAYMENTS</a></li>
                         </ul>
 
                         <ul class="navbar-nav ms-auto">
                         <li class="nav-item dropdown">
                             <a class="nav-link nav-prof dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="img/profile-icon-transparent.png" alt="Profile" />
-                            <span>ADMIN</span>
+                            <span>EMPLOYEE</span>
                             </a>
                             <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="login.php">Log Out</a></li>
@@ -81,7 +79,7 @@ $user_id = $_SESSION['user_id'];
 
                         <div class="d-flex align-items-center">
                             <input type="button"  value="ADD +" name = "btn_add" class="btn fw-bold btn-add me-3"data-bs-toggle="modal" data-bs-target="#addBorrowerModal">
-                            <form method="POST" action="ad_borrower.php" class="d-flex flex-nowrap">
+                            <form method="POST" action="em_borrower.php" class="d-flex flex-nowrap">
                                 <input type="search" name="search_in" placeholder="Search" class="form-control srch-inp">
                                 <input type="submit" name="btn_search" value="🔍︎" class="btn btn-srch">
                             </form>
@@ -89,8 +87,6 @@ $user_id = $_SESSION['user_id'];
                     </div>
                 </div>
             </div>
-
-            <!-- Add button -->
         
             <div class="modal fade" id="addBorrowerModal" tabindex="-1" aria-labelledby="addBorrowerModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -176,10 +172,10 @@ $user_id = $_SESSION['user_id'];
                 ?>
                     <td>
                         <div class="d-flex gap-1">
-                            <!-- Edit button -->
+                            <!-- Edit button triggers modal -->
                             <button class="btn btn-md btn-edit" data-bs-toggle="modal" data-bs-target="#editModal<?= $borrower_field['member_id']; ?>">Edit</button>
 
-                            <!-- Delete button -->
+                            <!-- Delete form -->
                             <form action="crud_btn.php" method="post" onsubmit="return confirm('Are you sure you want to delete this borrower?')">
                                 <input type="hidden" name="action" value="delete_borrower">
                                 <input type="hidden" name="member_id" value="<?= $borrower_field['member_id']; ?>">

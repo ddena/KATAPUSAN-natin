@@ -22,7 +22,7 @@ if (isset($_POST['apply'])) {
     $loan_term = $_POST['AFloanterm'];
     $payment_terms = $_POST['AFpaymentterms'];
 
-    $full_name =  $last_name.", ".$first_name . " " . $middle_name;
+    $full_name =  $first_name . " " . $middle_name ." ".$last_name;
 
     // insert member info into fm_tbl_member
     $sql_member = "INSERT INTO tbl_members (member_name,email,contact_information, address)

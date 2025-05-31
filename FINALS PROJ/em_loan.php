@@ -4,11 +4,10 @@ session_start();
 $user_id = $_SESSION['user_id'];
 
 ?>
-
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Admin Loan</title>
+        <title>Employee Loan</title>
 
         <meta charset="utf-8" />
         <meta
@@ -16,7 +15,7 @@ $user_id = $_SESSION['user_id'];
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
 
-        <link rel="stylesheet" href="style.css" />
+                <link rel="stylesheet" href="style.css" />
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -26,12 +25,11 @@ $user_id = $_SESSION['user_id'];
     </head>
 
     <body>
-        <div class="page-container d-flex flex-column min-vh-100">
         <header>
             <hr class = "upper-hr">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <a class="navbar-brand d-flex align-items-center me-3" href="admin_dashboard.php">
+                    <a class="navbar-brand d-flex align-items-center me-3" href="employee_dashboard.php">
                     <img src="img/fundifyme-transparent.png" alt="Fundify Me" />
                     </a>
 
@@ -47,19 +45,17 @@ $user_id = $_SESSION['user_id'];
 
                     <div class="offcanvas-body">
                         <ul class="navbar-nav mx-auto main-nav">
-                        <li class="nav-item"><a class="nav-link" href="admin_dashboard.php">OVERVIEW</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_borrower.php">BORROWERS</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="ad_loan.php">LOANS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_payments.php">PAYMENTS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_users.php">USERS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_logs.php">LOGS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="employee_dashboard.php">OVERVIEW</a></li>
+                        <li class="nav-item"><a class="nav-link" href="em_borrower.php">BORROWERS</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="em_loan.php">LOANS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="em_payments.php">PAYMENTS</a></li>
                         </ul>
 
                         <ul class="navbar-nav ms-auto">
                         <li class="nav-item dropdown">
                             <a class="nav-link nav-prof dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="img/profile-icon-transparent.png" alt="Profile" />
-                            <span>ADMIN</span>
+                            <span>EMPLOYEE</span>
                             </a>
                             <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="login.php">Log Out</a></li>
@@ -81,7 +77,7 @@ $user_id = $_SESSION['user_id'];
 
                         <div class="d-flex align-items-center">
                             <input type="button"  value="ADD +" name = "btn_add" class="btn fw-bold btn-add me-3"data-bs-toggle="modal" data-bs-target="#addLoanModal">
-                            <form method="POST" action="ad_loan.php" class="d-flex flex-nowrap">
+                            <form method="POST" action="em_loan.php" class="d-flex flex-nowrap">
                                 <input type="search" name="search_in" placeholder="Search" class="form-control srch-inp">
                                 <input type="submit" name="btn_search" value="🔍︎" class="btn btn-srch">
                             </form>
@@ -173,7 +169,7 @@ $user_id = $_SESSION['user_id'];
                         date_disbursed LIKE '".$search_in."%' OR 
                         outstanding_balance LIKE '".$search_in."%'";
                 } else {
-                    $selectsql = "SELECT * FROM tbl_loan ORDER BY date_applied DESC";
+                    $selectsql = "SELECT * FROM tbl_loan";
                 }
 
                 // Table

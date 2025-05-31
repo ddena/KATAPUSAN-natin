@@ -138,17 +138,96 @@
   border-bottom-right-radius: 0 !important;
   border-top-right-radius: 0 !important;
 }
-.btn-set {
+.btn-srch {
   background-color: #c6ceee !important;
   border-bottom-left-radius: 0 !important;
   border-top-left-radius: 0 !important;
 }
 
-.btn-set:hover {
+.btn-srch:hover {
   background-color: #7d8fc6 !important;
   transition: color 0.5s ease-in-out;
 }
 
-.custom-table {
-  background-color: #7d8fc6 !important; /* Change to any color you want */
+.btn-add {
+  background-color: #86ddf1 !important;
+  color: rgb(251, 253, 253) !important;
+}
+
+.btn-add:hover {
+  background-color: #3d7eb6 !important;
+  transition: color 0.5s ease-in-out;
+}
+
+.btn-edit {
+  color: rgb(73, 109, 207) !important;
+}
+
+.btn-edit:hover {
+  text-shadow: 1px 1px 2px rgba(42, 132, 165, 0.842);
+  transition: text-shadow 0.3s ease-in-out;
+}
+
+.btn-delete {
+  color: rgb(206, 37, 37) !important;
+}
+
+.btn-delete:hover {
+  text-shadow: 1px 1px 2px rgba(193, 60, 60, 0.842);
+  transition: text-shadow 0.3s ease-in-out;
+}
+
+.btn-cancel {
+  background-color: #767d7f !important;
+  color: rgb(251, 253, 253) !important;
+}
+
+.btn-cancel:hover {
+  background-color: #353e40 !important;
+  transition: color 0.5s ease-in-out;
+}
+
+.table-bg {
+  background-color: #c6ceee !important;
+  color: #1e3a8a;
+}
+
+.table-bg th {
+  background-color: #c6ceee !important;
+  color: #1e3a8a !important;
+}
+
+.table-bg td {
+  background-color: #cfd6f4b1 !important;
+}
+
+footer {
+  background-color: #1e3a8a;
+  color: white;
+  text-align: center;
+  padding: 0.75rem 0;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }

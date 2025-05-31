@@ -184,8 +184,8 @@
 
                     <div class="offcanvas-body">
                         <ul class="navbar-nav mx-auto main-nav">
-                        <li class="nav-item"><a class="nav-link active" href="admin_dashboard.php">OVERVIEW</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ad_borrower.php">BORROWERS</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="kc-admin-dashboard.php">OVERVIEW</a></li>
+                        <li class="nav-item"><a class="nav-link" href="kc-ad-borrower.php">BORROWERS</a></li>
                         <li class="nav-item"><a class="nav-link" href="ad_loan.php">LOANS</a></li>
                         <li class="nav-item"><a class="nav-link" href="ad_payments.php">PAYMENTS</a></li>
                         <li class="nav-item"><a class="nav-link" href="ad_users.php">USERS</a></li>

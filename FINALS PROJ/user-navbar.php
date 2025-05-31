@@ -255,7 +255,7 @@ if ($members_result && $members_result->num_rows > 0) {
         <div class="col-md-8">
             <div class="card border-0 rounded-3">
                 <div class="card-header bg-primary text-white p-3">
-                    <h4 class="mb-0 text-center">Most Recent User</h4>
+                    <h4 class="mb-0 text-center">User Profile</h4>
                 </div>
 
                 <?php if ($currentUser && $currentMember) { ?>

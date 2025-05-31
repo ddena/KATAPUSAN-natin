@@ -1,5 +1,3 @@
-<!--TBE TANGINAAAAA-->
-
 <?php
 $servername = "localhost";
 $username = "root";
@@ -25,6 +23,13 @@ if (isset($_POST['apply'])) {
     $loan_type_id = $_POST['AFloantype'];
     $loan_term = $_POST['AFloanterm'];
     $payment_terms = $_POST['AFpaymentterms'];
+
+    // valid id photo
+    $imagepath = "fm-images/".basename($_FILES['upload_img']['name']); 
+    move_uploaded_file($_FILES['upload_img']['tmp_name'], $imagepath);
+
+    $sql_user = "INSERT INTO fm_tbl_users (img_path) VALUES ('$imagepath')";
+    $conn->query($sql_user);
 
     // insert member info into fm_tbl_member
     $sql_member = "INSERT INTO fm_tbl_member (member_name, contant_information, address)
@@ -103,7 +108,6 @@ if (isset($_POST['apply'])) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -114,7 +118,6 @@ if (isset($_POST['apply'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-
     * {
       margin: 0;
       padding: 0;
@@ -183,7 +186,7 @@ if (isset($_POST['apply'])) {
         border-top: 1px solid #000000;
         width: 100%;
         margin: 0;
-        opacity: 100%:
+        opacity: 100%;
     }
 
     /*header css*/
@@ -290,8 +293,95 @@ if (isset($_POST['apply'])) {
       color: red;
     }
 
-    /*footer css*/
+    /*valid id*/
+    .upload-section {
+      border: 2px dashed #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      margin: 20px 0;
+      background-color: #fafafa;
+    }
 
+    .upload-section.dragover {
+      border-color: #1E3A8A;
+      background-color: #f0f4ff;
+    }
+
+    .upload-section h4 {
+      color: #1E3A8A;
+      margin-bottom: 10px;
+    }
+
+    .upload-section p {
+      color: #666;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-input-btn {
+      background-color: #1E3A8A;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      border: none;
+      font-size: 14px;
+    }
+
+    .file-input-btn:hover {
+      background-color: #16307a;
+    }
+
+    .preview-container {
+      margin-top: 20px;
+    }
+
+    .preview-image {
+      max-width: 300px;
+      max-height: 200px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border: 2px solid #ddd;
+    }
+
+    .file-info {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #e8f4f8;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #333;
+    }
+
+    .remove-file {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+
+    .remove-file:hover {
+      background-color: #c82333;
+    }
+
+    /*footer css*/
     footer {
       background-color: #f8f8f8;
       padding: 40px;
@@ -323,8 +413,8 @@ if (isset($_POST['apply'])) {
 
     .footer-column ul li {
       margin-bottom: 10px;
-
     }
+
     .footer-column ul li a {
       text-decoration: none;
       color: #333;
@@ -379,202 +469,237 @@ if (isset($_POST['apply'])) {
       margin-top: 40px;
       margin-bottom: 20px;
     }
-        
+
+    @media (max-width: 768px) {
+      .form-card {
+        width: 100%;
+        margin: 0 10px;
+      }
+      
+      .preview-image {
+        max-width: 250px;
+      }
+    }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<!--navbar-->
 <body class="bg-light">
+<!--navbar-->
 <hr class="upper-hr">
-    <nav class="navbar navbar-expand-lg bg-white">
-        <div class="container-fluid px-5">
-            <a class="navbar-brand d-flex align-items-center me-3" href="homepage.php">
-                <img src="fundifyme-transparent.png" alt="Fundify Me">
-            </a>
+<nav class="navbar navbar-expand-lg bg-white">
+    <div class="container-fluid px-5">
+        <a class="navbar-brand d-flex align-items-center me-3" href="homepage.php">
+            <img src="fundifyme-transparent.png" alt="Fundify Me">
+        </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <span class="navbar-toggler-icon"></span>
-            </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav mx-auto text-center gap-2">
-                <li class="nav-item">
-                    <a class="nav-link fw-bold" href="homepage.php">HOME</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold" href="application-form.php">APPLY</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold" href="my-loans.php">MY LOANS</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold" href="payment-history.php">PAYMENT HISTORY</a>
-                </li>
-            </ul>
-        </div> 
+    <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav mx-auto text-center gap-2">
+            <li class="nav-item">
+                <a class="nav-link fw-bold" href="homepage.php">HOME</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-bold" href="application-form.php">APPLY</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-bold" href="my-loans.php">MY LOANS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-bold" href="payment-history.php">PAYMENT HISTORY</a>
+            </li>
+        </ul>
+    </div> 
 
-        <div class="profile-icon d-flex justify-content-end">
-            <a class="nav-link" href="user-navbar.php">
-                <img src="profile-icon-transparent.png" alt="Profile">
-            </a>
-        </div>    
+    <div class="profile-icon d-flex justify-content-end">
+        <a class="nav-link" href="user-navbar.php">
+            <img src="profile-icon-transparent.png" alt="Profile">
+        </a>
+    </div>    
 
-    </div>
-    </nav>
-    <hr class="lower-hr">
+</div>
+</nav>
+<hr class="lower-hr">
 
 <!--header-->
 <div class="header mt-5">
-    <h1 class="mt-3"><b>Application Form</b></h1>
-    <div class="breadcrumb">
-      <span><a href="homepage.php"> Home </a></span> 
-      <span class="mx-2"> / </span> 
-      <span> Loan Apply Form </span>
-    </div> 
-  </div>
+  <h1 class="mt-3"><b>Application Form</b></h1>
+  <div class="breadcrumb">
+    <span><a href="homepage.php"> Home </a></span> 
+    <span class="mx-2"> / </span> 
+    <span> Loan Apply Form </span>
+  </div> 
+</div>
 
 <!--application form-->
-  <div class="form-container">
-    <div class="form-card">
-      <h3><b>Personal Details</b></h3>
-      <p>Fill out the form to submit your loan request. Do not leave blank fields.</p>
+<div class="form-container">
+  <div class="form-card">
+    <h3><b>Personal Details</b></h3>
+    <p>Fill out the form to submit your loan request. Do not leave blank fields.</p>
 
-      <form action="application-form.php" method="POST">
+    <form action="application-form.php" method="POST" enctype="multipart/form-data">
 
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" name="AFfullname" id="" value="" placeholder="First Name, Middle Name, Last Name">
+    <div class="form-group">
+      <label>Full Name <span class="required">*</span></label>
+      <input type="text" name="AFfullname" required placeholder="First Name, Middle Name, Last Name">
+    </div>
+
+    <div class="row">
+      <div class="col form-group">
+        <label>Email <span class="required">*</span></label>
+        <input type="email" name="AFemail" required>
       </div>
 
-      <div class="row">
-        <div class="col form-group">
-          <label>Email</label>
-          <input type="email" name="AFemail" id="" value="">
-        </div>
-
-        <div class="col form-group">
-          <label>Contact Number</label>
-          <input type="text" name="AFcontactnum" id="" value="">
-        </div>
+      <div class="col form-group">
+        <label>Contact Number <span class="required">*</span></label>
+        <input type="tel" name="AFcontactnum">
       </div>
+    </div>
+    
+    <div class="form-group">
+      <label>Address <span class="required">*</span></label>
+      <input type="text" placeholder="Street Address, Subdivision, City, Province, Country" name="AFaddress" required>
+    </div>
+
+    <h3><b>Loan Details</b></h3>
+    <p>Select your preferred loan type and terms.</p>
+
+    <div class="form-group">
+      <label>Loan Type <span class="required">*</span></label>
+      <select name="AFloantype" required>
+        <option value="" selected disabled>Select Loan Type</option>
+        <option value="1">Personal Loan (5% interest)</option>
+        <option value="2">Auto Loan (6% interest)</option>
+        <option value="3">Housing Loan (4% interest)</option>
+        <option value="4">Student Loan (3% interest)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Loan Term <span class="required">*</span></label>
+      <select name="AFloanterm" required>
+        <option value="" selected disabled>Select Term</option>
+        <option value="6">6 months</option>
+        <option value="12">12 months</option>
+        <option value="24">24 months</option>
+      </select>
+    </div>
+
+    <h3><b>Payment Details</b></h3>
+    <p>Choose your preferred payment schedule.</p>
+
+    <div class="form-group">
+      <label>Payment Terms <span class="required">*</span></label>
+      <select name="AFpaymentterms" required>
+        <option value="" selected disabled>Select Terms</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Quarterly">Quarterly</option>
+      </select>
+    </div>
+
+    <!--valid id upload section-->
+    <h3><b>Valid ID Upload</b></h3>
+    <p>Please upload a clear photo of your valid government-issued ID.</p>
+    
+    <div class="upload-section" id="uploadArea">
+      <h4><i class="fas fa-cloud-upload-alt"></i> Upload Valid ID</h4>
+      <p>Drag and drop your ID photo here, or click to browse</p>
+      <p><small>Accepted formats: JPG, JPEG, PNG (Max size: 5MB)</small></p>
       
-      <div class="form-group">
-        <label>Address</label>
-        <input type="text" placeholder="Street Address, Subdivision, City, Province, Country" name="AFaddress" id="" value="">
+      <div class="file-input-wrapper">
+        <input type="file" name="upload_img" id="fileInput" accept="image/*" required onchange="previewImage(event)">
+        <label for="fileInput" class="file-input-btn">
+          <i class="fas fa-folder-open"></i> Choose File
+        </label>
       </div>
-
-      <h3><b>Loan Details</b></h3>
-      <p>Fill out the form to submit your loan request. Do not leave blank fields.</p>
-
-      <div class="form-group">
-        <label>Loan Type</label>
-        <select name="AFloantype" required>
-          <option selected disabled>Select Loan Type</option>
-          <option value="1">Personal Loan</option>
-          <option value="2">Auto Loan</option>
-          <option value="3">Housing Loan</option>
-          <option value="4">Student Loan</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Loan Term</label>
-        <select name="AFloanterm" required>
-          <option selected disabled>Select Term</option>
-          <option value="6">6 months</option>
-          <option value="12">12 months</option>
-          <option value="24">24 months</option>
-        </select>
-      </div>
-
-      <!--payment terms -->
-      <h3><b>Payment Details</b></h3>
-      <p>Fill out the form to submit your loan request. Do not leave blank fields.</p>
-
-      <div class="form-group">
-        <label>Payment Terms</label>
-        <select name="AFpaymentterms" required>
-          <option selected disabled>Select Terms</option>
-          <option>Monthly</option>
-          <option>Quarterly</option>
-        </select>
-      </div>
-
-      <div class="row">
-        <div class="col mt-2 mb-2">  
-            <input type="submit"  name="apply" class="btn btn-dark btn-block w-100" value="Apply Now" id=sub>
-        </div>
     </div>
+
+    <div class="preview-container" id="previewContainer" style="display: none;">
+      <img id="preview_img" class="preview-image" alt="ID Preview">
+      <div class="file-info">
+        <button type="button" class="remove-file" onclick="removeFile()">
+          <i class="fas fa-times"></i> Remove
+        </button>
+      </div>
     </div>
+
+    <div class="row mt-4">
+      <div class="col">  
+          <input type="submit" name="apply" class="btn btn-dark btn-block w-100" value="Apply Now" id="submitBtn">
+      </div>
+    </div>
+    </form>
+  </div>
 </div>
-</form>
 
-  <!--footer tbe-->
-  <hr class="footer-divider">
+<!--footer-->
+<hr class="footer-divider">
 
 <footer>
-    <div class="footer-container mt-5">
-      <div class="footer-column logo-column">
-        <div class="footer-logo">
-          <img src="fundifyme-transparent.png" alt="Logo">
-        </div>
-        <div class="subscribe mb-5">
-          <p><strong>Loan Now</strong></p>
-          <input type="email" placeholder="Enter your Email">
-          <button class="mt-3 px-5">Loan Now</button>
-        </div>
+  <div class="footer-container mt-5">
+    <div class="footer-column logo-column">
+      <div class="footer-logo">
+        <img src="fundifyme-transparent.png" alt="Logo">
       </div>
-
-      <div class="footer-column">
-        <h5>Information</h5>
-        <ul>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">More Search</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <h5>Helpful Links</h5>
-        <ul>
-          <li><a href="#">Services</a></li>
-          <li><a href="#">Supports</a></li>
-          <li><a href="#">Terms and Conditions</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <h5>Our Services</h5>
-        <ul>
-          <li><a href="application-form.php">Loan Application</a></li>
-          <li><a href="#">Loan Status Tracking</a></li>
-          <li><a href="#">Flexible Payment Options</a></li>
-          <li><a href="#">Financial Assistance</a></li>
-          <li><a href="#">Member Support</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <h5>Contact Us</h5>
-        <div class="contact-info">
-          <p><i class="fas fa-phone"></i> +63 912 345 6789</p>
-          <p><i class="fas fa-envelope"></i> support@fundifyme.ph</p>
-        </div>
-        <div class="social-icons">
-          <i class="fab fa-facebook"></i>
-          <i class="fab fa-instagram"></i>
-          <i class="fab fa-linkedin"></i>
-          <i class="fab fa-twitter"></i>
-        </div>
+      <div class="subscribe mb-5">
+        <p><strong>Loan Now</strong></p>
+        <input type="email" placeholder="Enter your Email">
+        <button class="mt-3 px-5">Loan Now</button>
       </div>
     </div>
-    <div class="footer-bottom"> 
-     <p class="mt-3">Copyright @ 2025. All Rights Reserved.</p> 
-    </div>
-  </footer>
 
-  <?php
+    <div class="footer-column">
+      <h5>Information</h5>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">More Search</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h5>Helpful Links</h5>
+      <ul>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Supports</a></li>
+        <li><a href="#">Terms and Conditions</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h5>Our Services</h5>
+      <ul>
+        <li><a href="application-form.php">Loan Application</a></li>
+        <li><a href="#">Loan Status Tracking</a></li>
+        <li><a href="#">Flexible Payment Options</a></li>
+        <li><a href="#">Financial Assistance</a></li>
+        <li><a href="#">Member Support</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h5>Contact Us</h5>
+      <div class="contact-info">
+        <p><i class="fas fa-phone"></i> +63 912 345 6789</p>
+        <p><i class="fas fa-envelope"></i> support@fundifyme.ph</p>
+      </div>
+      <div class="social-icons">
+        <i class="fab fa-facebook"></i>
+        <i class="fab fa-instagram"></i>
+        <i class="fab fa-linkedin"></i>
+        <i class="fab fa-twitter"></i>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom"> 
+   <p class="mt-3">Copyright @ 2025. All Rights Reserved.</p> 
+  </div>
+</footer>
+
+<?php
 if ($alertMessage) {
     echo "<script>
         Swal.fire({
@@ -594,7 +719,33 @@ if ($alertMessage) {
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+
+<script>
+    function previewImage(event) {
+        var file = event.target.files[0];
+        var preview = document.getElementById("preview_img");
+        var previewContainer = document.getElementById("previewContainer");
+        var uploadArea = document.getElementById("uploadArea");
+        
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            previewContainer.style.display = 'block';
+            uploadArea.style.display = 'none';
+        }
+    }
+    
+    function removeFile() {
+        document.getElementById("fileInput").value = '';
+        document.getElementById("preview_img").src = '';
+        document.getElementById("previewContainer").style.display = 'none';
+        document.getElementById("uploadArea").style.display = 'block';
+    }
+    
+    // click to upload
+    document.getElementById('uploadArea').addEventListener('click', function() {
+        document.getElementById('fileInput').click();
+    });
+</script>
+
 </body>
 </html>
-
-

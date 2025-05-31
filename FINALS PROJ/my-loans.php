@@ -507,7 +507,7 @@ if ($_POST && isset($_POST['make_payment'])) {
                     echo '
                     <div class="col-md-6 col-lg-4">
                         <div class="card loan-card h-100 border-0 shadow-sm">
-                            <!-- Card Header with Loan ID and status -->
+                            <!--loan id and status -->
                             <div class="card-header border-0 bg-white position-relative pt-4 pb-2">
                                 <div class="loan-indicator"></div>
                                 <div class="d-flex justify-content-between align-items-center">
@@ -520,7 +520,7 @@ if ($_POST && isset($_POST['make_payment'])) {
                             
                             <!-- loan details -->
                             <div class="card-body pt-3">
-                                <!-- Loan Amount and Interest Rate -->
+                                <!--loan amount and interest rate-->
                                 <div class="loan-amount-section p-3 mb-4 bg-light rounded-3">
                                     <div class="row align-items-center">
                                         <div class="col-7">
@@ -534,7 +534,7 @@ if ($_POST && isset($_POST['make_payment'])) {
                                     </div>
                                 </div>
                                 
-                                <!-- Payment Progress Bar -->
+                                <!--payment progress bar-->
                                 <div class="payment-progress mb-3">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <small class="text-muted">Payment Progress</small>
@@ -570,7 +570,7 @@ if ($_POST && isset($_POST['make_payment'])) {
                                     </div>
                                 </div>
                                 
-                                <!-- Outstanding Balance -->
+                                <!--outstanding balance-->
                                 <div class="outstanding-balance mt-4 mb-3">
                                     <small class="text-muted d-block">Outstanding Balance</small>
                                     <div class="d-flex justify-content-between align-items-center">
@@ -794,7 +794,7 @@ function setPaymentDetails(loanId, balance) {
     document.getElementById('modalBalance').textContent = '₱' + balance.toLocaleString('en-US', {minimumFractionDigits: 2});
     document.getElementById('hiddenLoanId').value = loanId;
     
-    // Reset form
+    // form reset
     document.getElementById('paymentAmount').value = '';
     document.getElementById('paymentMethod').value = '';
     updateSummary();

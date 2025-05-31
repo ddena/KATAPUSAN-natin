@@ -24,11 +24,17 @@ if ($_POST && isset($_POST['make_payment'])) {
                            WHERE loan_id = $loan_id";
         $conn->query($update_balance);
 
+       // insert logs
+        $id = $_SESSION['user_id'];
+        $log_action = "Made a Payment of ₱" . number_format($payment_amount, 2) . " for Loan ID #$loan_id";
+        $logssql = "INSERT INTO tbl_logs (user_id, action, datetime) VALUES ('$id', '$log_action', NOW())";
+        $conn->query($logssql);
+
         $success_message = "Payment of ₱" . number_format($payment_amount, 2) . " has been successfully processed!";
-    } else {
-        $error_message = "Error processing payment. Please try again.";
+        } else {
+            $error_message = "Error processing payment. Please try again.";
+        }
     }
-}
 ?>
 
 <!DOCTYPE html>

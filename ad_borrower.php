@@ -1,3 +1,10 @@
+<?php 
+session_start();
+
+$user_id = $_SESSION['user_id'];
+
+?>
+
 <!doctype html>
 <html lang="en">
     <head>
@@ -9,7 +16,7 @@
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
 
-        <link rel="stylesheet" href="admin_style.css" />
+        <link rel="stylesheet" href="style.css" />
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -19,6 +26,7 @@
     </head>
 
     <body>
+        <div class="page-container d-flex flex-column min-vh-100">
         <header>
             <hr class = "upper-hr">
             <nav class="navbar navbar-expand-lg">
@@ -65,37 +73,38 @@
             <hr class="lower-hr">
         </header>
 
-        <main>
+        <main class="flex-grow-1">
             <div class="container-fluid mt-3">
                 <div class="row search_bar mb-1">
-                    <div class="col-12 d-flex justify-content-between align-items-center flex-nowrap">
-                        <h2 class="text-light mb-0">LIST OF BORROWERS</h2>
+                    <div class="col-12 d-flex justify-content-between align-items-center">
+                        <h2 class="text-light mb-2">LIST OF BORROWERS</h2>
 
-                        <div class="d-flex align-items-center flex-nowrap">
-                            <input type="button"  value="ADD +" name = "btn_add" class="btn fw-bold text-light bg-info me-3"data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <div class="d-flex align-items-center">
+                            <input type="button"  value="ADD +" name = "btn_add" class="btn fw-bold btn-add me-3"data-bs-toggle="modal" data-bs-target="#addBorrowerModal">
                             <form method="POST" action="ad_borrower.php" class="d-flex flex-nowrap">
-                                <input type="search" name="search_in" placeholder="Search" class="form-control me-2 srch-inp">
-                                <input type="submit" name="btn_search" value="🔍︎" class="btn btn-set">
+                                <input type="search" name="search_in" placeholder="Search" class="form-control srch-inp">
+                                <input type="submit" name="btn_search" value="🔍︎" class="btn btn-srch">
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
-<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+        
+            <div class="modal fade" id="addBorrowerModal" tabindex="-1" aria-labelledby="addBorrowerModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <form action="crud_btn.php" method="post">
                     <input type="hidden" name="action" value="add_borrower">
                     <div class="modal-content">
                         <div class="modal-header">
-                        <h5 class="modal-title" id="addUserModalLabel">Add New Borrower</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h5 class="modal-title" id="addBorrowerModalLabel">Add New Borrower</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+
                         <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="newMemberName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="newMemberName" name="member_name" required>
-                        </div>
+                            <div class="mb-3">
+                                <label for="newMemberName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="newMemberName" name="member_name" required>
+                            </div>
                         <div class="mb-3">
                             <label for="newEmail" class="form-label">Email</label>
                             <input type="email" class="form-control" id="newEmail" name="email" required>
@@ -110,15 +119,132 @@
                         </div>
                         </div>
                         <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Add Borrower</button>
+                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-add">Add Borrower</button>
                         </div>
                     </div>
                     </form>
                 </div>
             </div>
+
+    <?php 
+
+        require_once "connection.php";
+
+        if (isset($_POST['btn_search'])) {
+            $search_in = $_POST['search_in'];
+
+            $selectsql = "SELECT * FROM tbl_members WHERE 
+                member_id LIKE '".$search_in."%' OR 
+                member_name LIKE '%".$search_in."%' OR 
+                email LIKE '".$search_in."%' OR 
+                contact_information LIKE '".$search_in."%' OR 
+                address LIKE '".$search_in."%'";
+        } else {
+            $selectsql = "SELECT * FROM tbl_members";
+        }
+
+        // Table
+        $result = $conn->query($selectsql);
+
+        if ($result -> num_rows > 0) {
+            ?> 
+            
+            <div class="row mt-10">
+                <div class="col">
+                    <table class = "table table-bg mb-1">
+                        <tr>
+                            <th>Member ID</th>
+                            <th>Full name</th>
+                            <th>Email</th>
+                            <th>Contact Number</th>
+                            <th>Address</th>
+                            <th></th>
+                        </tr>
+            
+                <?php
+            
+                foreach ($result as $borrower_field) {
+                    echo "<tr>";
+                    echo "<td>".$borrower_field['member_id']."</td>";        
+                    echo "<td>".$borrower_field['member_name']."</td>";
+                    echo "<td>".$borrower_field['email']."</td>";
+                    echo "<td>".$borrower_field['contact_information']."</td>";
+                    echo "<td>".$borrower_field['address']."</td>"; 
+                ?>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <!-- Edit button triggers modal -->
+                            <button class="btn btn-md btn-edit" data-bs-toggle="modal" data-bs-target="#editModal<?= $borrower_field['member_id']; ?>">Edit</button>
+
+                            <!-- Delete form -->
+                            <form action="crud_btn.php" method="post" onsubmit="return confirm('Are you sure you want to delete this borrower?')">
+                                <input type="hidden" name="action" value="delete_borrower">
+                                <input type="hidden" name="member_id" value="<?= $borrower_field['member_id']; ?>">
+                                <button type="submit" class="btn btn-md btn-delete">Delete</button>                        
+                            </form>
+                        </div>
+                    </td>
+                <?php echo "</tr>"; ?>
+
+                <div class="modal fade" id="editModal<?= $borrower_field['member_id']; ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $borrower_field['member_id']; ?>" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form action="crud_btn.php" method="post">
+                            <input type="hidden" name="action" value="edit_borrower">
+                            <input type="hidden" name="member_id" value="<?= $borrower_field['member_id']; ?>">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel<?= $borrower_field['member_id']; ?>">Edit Borrower</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                            <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="memberName<?= $borrower_field['member_id']; ?>" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="memberName<?= $borrower_field['member_id']; ?>" name="member_name" value="<?= htmlspecialchars($borrower_field['member_name']); ?>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email<?= $borrower_field['member_id']; ?>" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email<?= $borrower_field['member_id']; ?>" name="email" value="<?= htmlspecialchars($borrower_field['email']); ?>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contact<?= $borrower_field['member_id']; ?>" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" id="contact<?= $borrower_field['member_id']; ?>" name="contact_information" value="<?= htmlspecialchars($borrower_field['contact_information']); ?>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address<?= $borrower_field['member_id']; ?>" class="form-label">Address</label>
+                                <textarea class="form-control" id="address<?= $borrower_field['member_id']; ?>" name="address" required><?= htmlspecialchars($borrower_field['address']); ?></textarea>
+                            </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+
+        <?php } ?>
+            </table>
+        </div>
+    </div>
+    
+    <?php    
+        } else {
+                    echo '<div class="col-12">
+                                <div class="alert text-center p-4 border-0">
+                                    <div class="alert-content">
+                                        <i class="fas fa-info-circle fa-3x text-info mb-3"></i>
+                                        <h5>No Payment Records Found</h5>
+                                    </div>
+                                </div>
+                            </div>';
+                }
+
+    ?>
+    </main>
         <footer>
-            <!-- place footer here -->
+             <div>© 2025 Fundify Me. All rights reserved.</div>
         </footer>
         <script
             src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -132,137 +258,6 @@
             crossorigin="anonymous"
         ></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    </div>
     </body>
 </html>
-
-
-<?php 
-
-require_once "connection.php";
-
-//debug database connection
-
-// if ($conn -> connect_error) {
-//     die("Connection Unsuccessful");
-// } else {
-//     echo "Connection Successful";
-// }
-
-if (isset($_POST['btn_search'])) {
-    $search_in = $_POST['search_in'];
-
-    $selectsql = "SELECT * FROM tbl_members WHERE 
-        member_id LIKE '".$search_in."%' OR 
-        member_name LIKE '%".$search_in."%' OR 
-        email LIKE '".$search_in."%' OR 
-        contact_information LIKE '".$search_in."%' OR 
-        address LIKE '".$search_in."%'";
-} else {
-    $selectsql = "SELECT * FROM tbl_members";
-}
-
-$result = $conn->query($selectsql);
-
-if ($result -> num_rows > 0) {
-    ?> 
-    
-    <div class="row mt-10">
-        <div class="col">
-            <table class = "table table-light">
-                <tr>
-                    <th class = "">Member ID</th>
-                    <th class = "">Full name</th>
-                    <th class = "">Email</th>
-                    <th class = "">Contact Number</th>
-                    <th class = "">Address</th>
-                    <th class = ""></th>
-                </tr>
-    
-        <?php
-    
-        foreach ($result as $borrower_field) {
-            echo "<tr>";
-            echo "<td>".$borrower_field['member_id']."</td>";        
-            echo "<td>".$borrower_field['member_name']."</td>";
-            echo "<td>".$borrower_field['email']."</td>";
-            echo "<td>".$borrower_field['contact_information']."</td>";
-            echo "<td>".$borrower_field['address']."</td>"; 
-            ?>
-               <td>
-                <div class="d-flex gap-2">
-                    <!-- Edit button triggers modal -->
-                    <button class="btn btn-md text-primary" data-bs-toggle="modal" data-bs-target="#editModal<?= $borrower_field['member_id']; ?>">Edit</button>
-
-                    <!-- Delete form -->
-                    <form action="crud_btn.php" method="post" onsubmit="return confirm('Are you sure you want to delete this borrower?')">
-                        <input type="hidden" name="action" value="delete_borrower">
-                        <input type="hidden" name="member_id" value="<?= $borrower_field['member_id']; ?>">
-                        <button type="submit" class="btn btn-md text-danger">Delete</button>
-                    </form>
-                </div>
-            </td>
-          <?php  
-          echo "</tr>"; ?>
-
-
-          <div class="modal fade" id="editModal<?= $borrower_field['member_id']; ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $borrower_field['member_id']; ?>" aria-hidden="true">
-            <div class="modal-dialog">
-                <form action="crud_btn.php" method="post">
-                <input type="hidden" name="action" value="edit_borrower">
-                <input type="hidden" name="member_id" value="<?= $borrower_field['member_id']; ?>">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel<?= $borrower_field['member_id']; ?>">Edit Borrower</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="memberName<?= $borrower_field['member_id']; ?>" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="memberName<?= $borrower_field['member_id']; ?>" name="member_name" value="<?= htmlspecialchars($borrower_field['member_name']); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email<?= $borrower_field['member_id']; ?>" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email<?= $borrower_field['member_id']; ?>" name="email" value="<?= htmlspecialchars($borrower_field['email']); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="contact<?= $borrower_field['member_id']; ?>" class="form-label">Contact Number</label>
-                        <input type="text" class="form-control" id="contact<?= $borrower_field['member_id']; ?>" name="contact_information" value="<?= htmlspecialchars($borrower_field['contact_information']); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="address<?= $borrower_field['member_id']; ?>" class="form-label">Address</label>
-                        <textarea class="form-control" id="address<?= $borrower_field['member_id']; ?>" name="address" required><?= htmlspecialchars($borrower_field['address']); ?></textarea>
-                    </div>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </div>
-                </form>
-            </div>
-            </div>
-
-            <?php 
-            }
-    
-        ?>
-            </table>
-        </div>
-    </div>
-    
-    <?php    
-        
-    } else {
-        echo '<div class="col-12">
-                    <div class="alert alert-info text-center p-4 shadow-sm border-0">
-                        <div class="alert-content">
-                            <i class="fas fa-info-circle fa-3x text-info mb-3"></i>
-                            <h5>No Borrower Records Found</h5>
-                        </div>
-                    </div>
-                </div>';
-    }
-    
-
-?>

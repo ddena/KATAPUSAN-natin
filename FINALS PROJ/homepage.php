@@ -260,7 +260,7 @@
 <hr class="upper-hr">
     <nav class="navbar navbar-expand-lg bg-white">
         <div class="container-fluid px-5">
-            <a class="navbar-brand d-flex align-items-center me-3" href="homepage.php">
+            <a class="navbar-brand d-flex align-items-center me-3" href="index.php">
                 <img src="fundifyme-transparent.png" alt="Fundify Me">
             </a>
 
@@ -271,7 +271,7 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mx-auto text-center gap-2">
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="homepage.php">HOME</a>
+                    <a class="nav-link fw-bold" href="index.php">HOME</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="application-form.php">APPLY</a>

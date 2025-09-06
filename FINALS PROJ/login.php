@@ -36,7 +36,7 @@ if(isset($_POST['sub'])){
     } elseif ($role == 'Employee') {
       header('Location: employee_dashboard.php'); 
     } else {
-      header('Location: homepage.php'); 
+      header('Location: index.php'); 
     }
 
     exit(); 
